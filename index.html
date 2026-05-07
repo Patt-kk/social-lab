@@ -471,14 +471,16 @@ table.dt tbody td{padding:9px 14px;font-size:12px;color:var(--text2);max-width:2
 .ms-all{font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.4px;color:var(--text3)}
 .ms-all.selected{color:var(--accent)}
 
-/* Analysis type toggle */
-.ai-type-toggle{display:flex;gap:8px;flex-wrap:wrap}
-.ai-type-btn{display:flex;flex-direction:column;gap:4px;padding:10px 16px;border:2px solid var(--border2);border-radius:10px;background:var(--surface);cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .15s;min-width:160px;text-align:left}
-.ai-type-btn:hover{border-color:var(--accent);background:var(--accent-lt)}
-.ai-type-btn.active{border-color:var(--accent);background:var(--accent-lt)}
-.ai-type-btn .at-icon{font-size:18px;line-height:1}
+/* Analysis type toggle — symmetric 2×2 grid */
+.ai-type-toggle{display:grid;grid-template-columns:repeat(2,1fr);gap:10px}
+@media (max-width:700px){.ai-type-toggle{grid-template-columns:1fr}}
+.ai-type-btn{display:flex;flex-direction:row;align-items:flex-start;gap:12px;padding:14px 16px;border:2px solid var(--border2);border-radius:12px;background:var(--surface);cursor:pointer;font-family:"DM Sans",sans-serif;transition:all .18s;text-align:left;width:100%}
+.ai-type-btn:hover{border-color:var(--accent);background:var(--accent-lt);transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.1)}
+.ai-type-btn.active{border-color:var(--accent);background:var(--accent-lt);box-shadow:0 0 0 3px rgba(37,99,235,.12)}
+.ai-type-btn .at-icon{font-size:22px;line-height:1;flex-shrink:0;margin-top:1px}
+.ai-type-btn .at-text{display:flex;flex-direction:column;gap:3px}
 .ai-type-btn .at-label{font-size:13px;font-weight:700;color:var(--text)}
-.ai-type-btn .at-desc{font-size:11px;color:var(--text3);line-height:1.4}
+.ai-type-btn .at-desc{font-size:11px;color:var(--text3);line-height:1.45}
 .ai-type-btn.active .at-label{color:var(--accent)}
 .ai-type-btn.active .at-desc{color:var(--accent)}
 /* Metric toggle */
@@ -585,7 +587,7 @@ table.dt tbody td{padding:9px 14px;font-size:12px;color:var(--text2);max-width:2
       <div class="kk-sig">
         <div class="kk-badge">KK</div>
         <div class="kk-text">
-          <div class="kk-name">Designed by KK</div>
+          <div class="kk-name">Designed by KK 🐻</div>
           <div class="kk-role">MFG - INSE Social Listening Lab</div>
         </div>
       </div>
@@ -918,7 +920,7 @@ table.dt tbody td{padding:9px 14px;font-size:12px;color:var(--text2);max-width:2
                 <span id="geminiKeyStatus" style="font-size:12px;font-weight:500;color:var(--text3)">No key saved</span>
               </div>
               <div style="font-size:11px;color:var(--text3);margin-top:6px">
-                Get a <strong>free</strong> key at <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--accent)">aistudio.google.com</a> — Gemini 2.5 Flash is free tier with rate limits
+                Get a <strong>free</strong> key at <a href="https://aistudio.google.com/app/apikey" target="_blank" style="color:var(--accent)">aistudio.google.com</a> — Gemini 2.5 Model is free tier with rate limits
               </div>
             </div>
           </div>
@@ -930,18 +932,31 @@ table.dt tbody td{padding:9px 14px;font-size:12px;color:var(--text2);max-width:2
               <div class="ai-type-toggle">
                 <button class="ai-type-btn active" id="aiTypeSocial" onclick="setAiType('social')">
                   <span class="at-icon">📡</span>
-                  <span class="at-label">Social Listening</span>
-                  <span class="at-desc">Themes, channels & strategic recommendations</span>
+                  <span class="at-text">
+                    <span class="at-label">Social Listening</span>
+                    <span class="at-desc">Themes, channels & strategic recommendations</span>
+                  </span>
                 </button>
                 <button class="ai-type-btn" id="aiTypeSentiment" onclick="setAiType('sentiment')">
                   <span class="at-icon">🎭</span>
-                  <span class="at-label">Sentiment Analysis</span>
-                  <span class="at-desc">Sentiment breakdown & key positive / negative drivers</span>
+                  <span class="at-text">
+                    <span class="at-label">Sentiment Analysis</span>
+                    <span class="at-desc">Sentiment breakdown & key positive / negative drivers</span>
+                  </span>
                 </button>
                 <button class="ai-type-btn" id="aiTypeBrand" onclick="setAiType('brand')">
                   <span class="at-icon">🏷</span>
-                  <span class="at-label">Brand Analysis</span>
-                  <span class="at-desc">Brand health, strengths, risks & strategic actions</span>
+                  <span class="at-text">
+                    <span class="at-label">Brand Analysis</span>
+                    <span class="at-desc">Brand health, strengths, risks & strategic actions</span>
+                  </span>
+                </button>
+                <button class="ai-type-btn" id="aiTypeGooglereview" onclick="setAiType('googlereview')">
+                  <span class="at-icon">⭐</span>
+                  <span class="at-text">
+                    <span class="at-label">Google Review Analysis</span>
+                    <span class="at-desc">Location performance, strengths & pain points from Google Reviews</span>
+                  </span>
                 </button>
               </div>
             </div>
@@ -949,6 +964,7 @@ table.dt tbody td{padding:9px 14px;font-size:12px;color:var(--text2);max-width:2
               <div>
                 <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px">Model</div>
                 <select id="aiModel" class="ai-select"></select>
+                <div id="aiModelBadge" style="margin-top:5px;font-size:10px;font-weight:700;color:#d97706;background:#fff8ed;border:1px solid #fde68a;border-radius:5px;padding:2px 7px;display:inline-flex;align-items:center;gap:4px">⭐ Recommended</div>
               </div>
               <div>
                 <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px">Brand</div>
@@ -981,6 +997,7 @@ table.dt tbody td{padding:9px 14px;font-size:12px;color:var(--text2);max-width:2
                     <!-- options injected by populateAiFilters -->
                   </div>
                 </div>
+                <div id="aiSourceLockNote" style="display:none;margin-top:5px;font-size:10px;font-weight:600;color:#d97706;background:#fff8ed;border:1px solid #fde68a;border-radius:5px;padding:2px 7px;">🔒 Locked to Google Reviews</div>
               </div>
               <div>
                 <div style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px">Sentiment</div>
@@ -3313,9 +3330,9 @@ let aiProvider  = 'gemini';  // 'gemini'
 
 const AI_MODELS = {
   gemini: [
-    { value: 'gemini-2.5-flash',          label: 'Gemini 2.5 Flash (free · recommended)' },
-    { value: 'gemini-2.5-flash-lite',      label: 'Gemini 2.5 Flash-Lite (free · fastest)' },
-    { value: 'gemini-2.5-pro',             label: 'Gemini 2.5 Pro (free tier · best quality)' },
+    { value: 'gemini-2.5-flash-lite', label: 'Gemini 2.5 Flash-Lite'},
+    { value: 'gemini-2.5-flash',      label: 'Gemini 2.5 Flash'},
+    { value: 'gemini-2.5-pro',        label: 'Gemini 2.5 Pro'},
   ],
 };
 
@@ -3324,10 +3341,26 @@ function populateModelSelect() {
   sel.innerHTML = '';
   AI_MODELS[aiProvider].forEach(m => {
     const opt = document.createElement('option');
-    opt.value = m.value; opt.textContent = m.label;
+    opt.value = m.value;
+    opt.textContent = m.tag ? `${m.label}  (${m.tag})` : m.label;
     sel.appendChild(opt);
   });
+  // Default to Flash-Lite
+  sel.value = 'gemini-2.5-flash-lite';
+  const badge = document.getElementById('aiModelBadge');
+  if (badge) badge.style.display = 'inline-flex';
 }
+
+// Show/hide recommended badge on model change
+document.addEventListener('DOMContentLoaded', () => {
+  const sel = document.getElementById('aiModel');
+  const badge = document.getElementById('aiModelBadge');
+  if (sel && badge) {
+    sel.addEventListener('change', () => {
+      badge.style.display = sel.value === 'gemini-2.5-flash-lite' ? 'inline-flex' : 'none';
+    });
+  }
+});
 
 // Provider toggle (Gemini only)
 document.querySelectorAll('.ai-provider-btn').forEach(btn => {
@@ -3408,6 +3441,10 @@ function getMatchingRows() {
   const allSrc  = sources[0] === '__all__';
   const allSent = sents[0]   === '__all__';
 
+  // When Google Review Analysis type is active, always hard-filter to googlereviews source
+  // regardless of what the Source dropdown shows (it may not have found the option to lock).
+  const forceGoogleReviews = aiAnalysisType === 'googlereview';
+
   return _aiPool().filter(row => {
     if (brand !== '__all__') {
       let b = String(row.Brands||'').trim();
@@ -3415,7 +3452,11 @@ function getMatchingRows() {
       const rowBrands = b.split(',').map(x=>x.trim()).filter(Boolean);
       if (!brands.some(sel => rowBrands.includes(sel))) return false;
     }
-    if (!allSrc) {
+    // Hard-filter: only googlereviews rows when in googlereview mode
+    if (forceGoogleReviews) {
+      const rawSrc = String(row.source || row.Source || row.channel || row.Channel || '').toLowerCase();
+      if (!rawSrc.includes('googlereviews')) return false;
+    } else if (!allSrc) {
       const rowSource = normalizeChannel(String(row.source || row.Source || row.channel || row.Channel || '').trim());
       if (!sources.includes(rowSource)) return false;
     }
@@ -3513,6 +3554,31 @@ function msToggleOption(key, el) {
   updateAiPostCount();
 }
 
+function msSetValue(key, value) {
+  // Programmatically select a specific value in a multi-select dropdown
+  const drop = document.getElementById('msDrop' + key);
+  if (!drop) return;
+  const allEl = drop.querySelector('.ms-all');
+  // Deselect all first
+  drop.querySelectorAll('.ms-option').forEach(o => {
+    o.classList.remove('selected');
+    o.querySelector('input').checked = false;
+  });
+  // Find and select matching option (case-insensitive)
+  const target = [...drop.querySelectorAll('.ms-option:not(.ms-all)')]
+    .find(o => (o.dataset.value || '').toLowerCase() === value.toLowerCase());
+  if (target) {
+    target.classList.add('selected');
+    target.querySelector('input').checked = true;
+    if (allEl) { allEl.classList.remove('selected'); allEl.querySelector('input').checked = false; }
+  } else {
+    // value not found — revert to All
+    if (allEl) { allEl.classList.add('selected'); allEl.querySelector('input').checked = true; }
+  }
+  msUpdateLabel(key);
+  updateAiPostCount();
+}
+
 function msGetValues(key) {
   const drop = document.getElementById('msDrop'+key);
   if (!drop) return ['__all__'];
@@ -3545,26 +3611,54 @@ document.getElementById('geminiSaveKey').addEventListener('click', () => {
 
 // ── SHARED PROMPT BUILDER ────────────────────────────────────────────────────
 // ── ANALYSIS TYPE SELECTOR ────────────────────────────────────────────────────
-let aiAnalysisType = 'social'; // 'social' | 'sentiment' | 'brand'
+let aiAnalysisType = 'social'; // 'social' | 'sentiment' | 'brand' | 'googlereview'
 
 function setAiType(type) {
   aiAnalysisType = type;
-  ['Social','Sentiment','Brand'].forEach(t => {
+  ['Social','Sentiment','Brand','Googlereview'].forEach(t => {
     document.getElementById('aiType'+t)?.classList.remove('active');
   });
-  const map = { social:'aiTypeSocial', sentiment:'aiTypeSentiment', brand:'aiTypeBrand' };
+  const map = { social:'aiTypeSocial', sentiment:'aiTypeSentiment', brand:'aiTypeBrand', googlereview:'aiTypeGooglereview' };
   document.getElementById(map[type])?.classList.add('active');
+
+  // Lock / unlock Source filter for Google Review type
+  const srcWrap = document.getElementById('msWrapSource');
+  const srcLockNote = document.getElementById('aiSourceLockNote');
+  if (type === 'googlereview') {
+    // Visually lock the Source dropdown — actual hard-filter is enforced in getMatchingRows()
+    if (srcWrap) {
+      srcWrap.style.opacity = '0.45';
+      srcWrap.style.pointerEvents = 'none';
+    }
+    // Update dropdown label to reflect the lock even if the option wasn't in the list
+    const srcLabel = document.getElementById('msLabelSource');
+    if (srcLabel) {
+      srcLabel.textContent = 'Google Reviews only';
+      srcLabel.classList.remove('placeholder');
+    }
+    if (srcLockNote) srcLockNote.style.display = '';
+  } else {
+    if (srcWrap) {
+      srcWrap.style.opacity = '';
+      srcWrap.style.pointerEvents = '';
+    }
+    // Restore dropdown label to reflect actual selection
+    msUpdateLabel('Source');
+    if (srcLockNote) srcLockNote.style.display = 'none';
+  }
+  updateAiPostCount();
 }
 
 // ── PROMPT ROUTER ─────────────────────────────────────────────────────────────
 function buildAiPrompts(rows) {
   const sources = msGetValues('Source'); const source = sources[0] === '__all__' ? '__all__' : sources.join(', ');
-  const isGoogleReviews = source.toLowerCase().includes('googlereviews') ||
+  const isGoogleReviews = aiAnalysisType === 'googlereview' ||
+    source.toLowerCase().includes('googlereviews') ||
     (rows.length > 0 && String(rows[0].source || '').toLowerCase().includes('googlereviews'));
 
-  if (isGoogleReviews)          return buildGoogleReviewPrompts(rows);
-  if (aiAnalysisType === 'sentiment') return buildSentimentPrompts(rows);
-  if (aiAnalysisType === 'brand')     return buildBrandPrompts(rows);
+  if (isGoogleReviews)                   return buildGoogleReviewPrompts(rows);
+  if (aiAnalysisType === 'sentiment')    return buildSentimentPrompts(rows);
+  if (aiAnalysisType === 'brand')        return buildBrandPrompts(rows);
   return buildSocialListeningPrompts(rows);
 }
 
