@@ -3710,10 +3710,10 @@ End each bullet with a risk label: 🔴 High / 🟡 Medium / 🟢 Low.
 Maximum 5 pain points.
 
 Rules:
-- Never write generic observations. Every sentence must reference specific locations, counts, or reviewer language from the data.
+- Never write generic observations. Every sentence must reference specific locations, or summarize the reviewer language.
 - Do not include an introduction, preamble, or conclusion outside the four sections above.
 - Do not use phrases like "it is worth noting", "overall", "in summary", or any filler language.
-- Do not include raw mention counts or post counts.
+- Do not include raw mention counts or post counts except the section of Location Performance.
 - Write in tight, direct analyst prose — each bullet should be 1–2 sentences maximum.`;
 
   const user = `Analyse the following ${rows.length} Google Reviews for ${brandCtx} (filtered to ${sentCtx}).${focusPart}
