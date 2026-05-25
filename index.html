@@ -329,6 +329,21 @@ table.dt tbody td{padding:9px 14px;font-size:12px;color:var(--text2);max-width:2
 .ai-save-btn:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
 .ai-select{width:100%;height:38px;background:var(--bg);border:1px solid var(--border2);border-radius:8px;padding:0 12px;font-family:"DM Sans",sans-serif;font-size:13px;color:var(--text);outline:none;cursor:pointer;transition:border-color .15s}
 .ai-select:focus{border-color:var(--accent)}
+
+/* ── CAMPAIGN TAB ── */
+.camp-ch-cell{display:flex;flex-direction:column;align-items:center;gap:2px;min-width:38px}
+.camp-ch-icon{width:20px;height:20px;border-radius:5px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.camp-ch-icon svg{width:12px;height:12px}
+.camp-ch-pct{font-family:"DM Mono",monospace;font-size:9px;font-weight:600;color:var(--text3)}
+.camp-ch-row{display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.camp-sent-bar{display:flex;height:10px;border-radius:3px;overflow:hidden;width:100%;gap:1px}
+.camp-sent-seg{height:100%;transition:width .5s cubic-bezier(.16,1,.3,1)}
+.camp-bar-wrap{display:flex;align-items:center;gap:8px;padding:8px 0}
+.camp-bar-label{font-size:11px;font-weight:600;color:var(--text2);white-space:nowrap;min-width:120px;max-width:160px;overflow:hidden;text-overflow:ellipsis}
+.camp-bar-track{flex:1;height:8px;background:var(--bg);border-radius:4px;overflow:hidden;position:relative}
+.camp-bar-fill{height:100%;border-radius:4px;background:var(--accent);transition:width .5s cubic-bezier(.16,1,.3,1)}
+.camp-bar-val{font-family:"DM Mono",monospace;font-size:10px;font-weight:600;color:var(--text3);min-width:52px;text-align:right}
+
 .ai-run-btn{display:inline-flex;align-items:center;gap:7px;background:var(--accent);color:#fff;border:none;border-radius:8px;padding:10px 20px;font-family:"DM Sans",sans-serif;font-size:14px;font-weight:600;cursor:pointer;transition:all .15s;white-space:nowrap}
 .ai-run-btn:hover{background:#1d4ed8;transform:translateY(-1px);box-shadow:0 4px 12px rgba(37,99,235,.3)}
 .ai-run-btn:disabled{opacity:.4;cursor:not-allowed;transform:none;box-shadow:none}
@@ -603,6 +618,7 @@ table.dt tbody td{padding:9px 14px;font-size:12px;color:var(--text2);max-width:2
       <button class="tab-btn" data-tab="overview">🔭 Overview</button>
       <button class="tab-btn" data-tab="brand">📌 Brand Deep-Dive</button>
       <button class="tab-btn" data-tab="charts">📊 Sentiment</button>
+      <button class="tab-btn" data-tab="campaign">🎯 Campaign</button>
       <button class="tab-btn" data-tab="greview">⭐ Google Review</button>
       <button class="tab-btn" data-tab="table">🗂 Data Table</button>
       <button class="tab-btn" data-tab="ai">✦ AI Summary</button>
@@ -728,6 +744,96 @@ table.dt tbody td{padding:9px 14px;font-size:12px;color:var(--text2);max-width:2
       </div>
 
       <!-- ═══ GOOGLE REVIEW ═══ -->
+      <!-- ═══ CAMPAIGN ═══ -->
+      <div class="panel" id="panel-campaign">
+        <div class="empty-state" id="campaignEmpty">
+          <div class="empty-icon">🎯</div>
+          <div class="empty-title">No campaign data found</div>
+          <div class="empty-sub">Upload a CSV with a <strong>Campaign</strong> column containing comma-separated values like <code>[campaign_a, campaign_b]</code></div>
+        </div>
+        <div id="campaignContent" style="display:none">
+
+          <!-- Campaign selector -->
+          <div style="margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+            <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Select Campaign <span id="campActiveLabel" style="font-weight:600;color:var(--accent);letter-spacing:0;text-transform:none;margin-left:6px"></span></div>
+            <div id="campPillsContainer" style="display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin"></div>
+          </div>
+
+          <!-- No-selection placeholder -->
+          <div id="campSelectPrompt" class="empty-state" style="padding:48px 20px">
+            <div class="empty-icon">🎯</div>
+            <div class="empty-title">Pick a campaign above</div>
+            <div class="empty-sub">Select a campaign to see its engagement, mentions, sentiment and top posts</div>
+          </div>
+
+          <!-- Campaign detail — shown only after selection -->
+          <div id="campDetail" style="display:none">
+
+            <!-- KPI summary row -->
+            <div class="bdd-kpi-row" id="campKpiRow" style="grid-template-columns:repeat(4,1fr);margin-bottom:20px"></div>
+
+            <!-- Campaign performance table (single campaign × channels) -->
+            <div class="card" style="margin-bottom:16px;padding:0;overflow:hidden">
+              <div style="padding:16px 20px 12px;border-bottom:1px solid var(--border)">
+                <div class="bdd-section-title" style="margin:0;border:0;padding:0"><span>📡</span>Performance by Channel</div>
+              </div>
+              <div style="overflow-x:auto">
+                <table class="bdd-compare-table" id="campTable">
+                  <thead><tr>
+                    <th>Channel</th>
+                    <th class="num">Engagement</th>
+                    <th class="num">Mentions</th>
+                    <th class="num">Positive %</th>
+                    <th class="num">Neutral %</th>
+                    <th class="num">Negative %</th>
+                    <th style="min-width:160px">Sentiment</th>
+                  </tr></thead>
+                  <tbody id="campTBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <!-- Row: Engagement by Channel + Mention by Channel -->
+            <div class="bdd-grid-2" style="margin-bottom:14px">
+              <div class="card" style="margin-bottom:0">
+                <div class="bdd-section-title"><span>⚡</span>Engagement by Channel</div>
+                <div id="campChannelIcons" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)"></div>
+                <div id="campChannelBars"></div>
+              </div>
+              <div class="card" style="margin-bottom:0">
+                <div class="bdd-section-title"><span>💬</span>Mention by Channel</div>
+                <div id="campMentionIcons" style="display:flex;flex-wrap:wrap;gap:10px;margin-bottom:16px;padding-bottom:16px;border-bottom:1px solid var(--border)"></div>
+                <div id="campMentionBars"></div>
+              </div>
+            </div>
+
+            <!-- Sentiment Distribution full-width -->
+            <div class="card" style="margin-bottom:14px">
+              <div class="bdd-section-title"><span>📊</span>Sentiment Distribution</div>
+              <div id="campSentDonut"></div>
+            </div>
+
+            <!-- Top posts -->
+            <div class="card">
+              <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;flex-wrap:wrap;gap:10px">
+                <div class="bdd-section-title" style="margin-bottom:0;border:none;padding:0"><span>🔥</span>Top Posts by Engagement</div>
+                <div style="display:flex;gap:6px;flex-wrap:wrap">
+                  <button class="gr-rev-pill active" data-camp-sent="all">All</button>
+                  <button class="gr-rev-pill" data-camp-sent="positive">😊 Positive</button>
+                  <button class="gr-rev-pill" data-camp-sent="neutral">😐 Neutral</button>
+                  <button class="gr-rev-pill" data-camp-sent="negative">😞 Negative</button>
+                </div>
+              </div>
+              <div id="campTopPosts"></div>
+              <div style="display:flex;justify-content:center;margin-top:10px">
+                <button class="btn-outline" id="campLoadMorePosts" style="display:none">Load more posts</button>
+              </div>
+            </div>
+
+          </div><!-- /#campDetail -->
+        </div>
+      </div><!-- /#panel-campaign -->
+
       <div class="panel" id="panel-greview">
         <div class="empty-state" id="greviewEmpty">
           <div class="empty-icon">⭐</div>
@@ -1239,7 +1345,7 @@ let allRawData = [];  // All rows parsed by pandas — used by AI Summary
 let activeBrands = new Set();
 let currentPage = 1;
 const PAGE_SIZE = 50;
-const DISPLAY_COLS = ['source','created_at','Brands','Topics','sentiment','text','link'];
+const DISPLAY_COLS = ['source','created_at','Brands','Topics','Campaign','sentiment','text','link'];
 const LINK_FIELDS  = ['link','Link','url','URL','post_url','post_link','permalink','source_url'];
 let reportData = { topicRows:[], sentRows:[], totalMention:0, totalEngagement:0, csvBlob:null };
 let csvFile1 = null, csvFile2 = null;  // store both uploaded files
@@ -1401,23 +1507,32 @@ def clean_and_split(val):
     return [x.strip() for x in s.split(',') if x.strip()]
 
 mfg = df.copy()
-mfg['_topics_list'] = mfg['Topics'].apply(clean_and_split)
-mfg['_brands_list'] = mfg['Brands'].apply(clean_and_split)
+mfg['_topics_list']   = mfg['Topics'].apply(clean_and_split)
+mfg['_brands_list']   = mfg['Brands'].apply(clean_and_split)
+if 'Campaign' in mfg.columns:
+    mfg['_campaign_list'] = mfg['Campaign'].apply(clean_and_split)
+else:
+    mfg['_campaign_list'] = [['(no campaign)']] * len(mfg)
 
-# Explode Topics first, then Brands — each row becomes one Brand + one Topic
+# Explode Topics → Brands → Campaign — each row becomes one Brand + one Topic + one Campaign
 mfg['Topics'] = mfg['_topics_list']
 filtered_mfg_exploded = mfg.explode('Topics').copy()
 
 filtered_mfg_exploded['Brands'] = filtered_mfg_exploded['_brands_list']
-filtered_mfg_exploded_final = filtered_mfg_exploded.explode('Brands').copy()
+filtered_mfg_exploded_2 = filtered_mfg_exploded.explode('Brands').copy()
 
-filtered_mfg_exploded_final['Brands'] = filtered_mfg_exploded_final['Brands'].astype(str).str.strip()
-filtered_mfg_exploded_final['Topics'] = filtered_mfg_exploded_final['Topics'].astype(str).str.strip()
+filtered_mfg_exploded_2['Campaign'] = filtered_mfg_exploded_2['_campaign_list']
+filtered_mfg_exploded_final = filtered_mfg_exploded_2.explode('Campaign').copy()
+
+filtered_mfg_exploded_final['Brands']   = filtered_mfg_exploded_final['Brands'].astype(str).str.strip()
+filtered_mfg_exploded_final['Topics']   = filtered_mfg_exploded_final['Topics'].astype(str).str.strip()
+filtered_mfg_exploded_final['Campaign'] = filtered_mfg_exploded_final['Campaign'].astype(str).str.strip()
 filtered_mfg_exploded_final['engagement_score'] = pd.to_numeric(filtered_mfg_exploded_final['engagement_score'], errors='coerce').fillna(0)
 
 print("Exploded shape:", filtered_mfg_exploded_final.shape)
-print("Unique Brands:", sorted(filtered_mfg_exploded_final['Brands'].unique()))
-print("Unique Topics:", sorted(filtered_mfg_exploded_final['Topics'].unique()))
+print("Unique Brands:",    sorted(filtered_mfg_exploded_final['Brands'].unique()))
+print("Unique Topics:",    sorted(filtered_mfg_exploded_final['Topics'].unique()))
+print("Unique Campaigns:", sorted(filtered_mfg_exploded_final['Campaign'].unique()))
 `],
 
     // ── STEP 3: sentiment count pivot — sum per Brand+Topic+sentiment ─────────
@@ -1634,6 +1749,21 @@ eng_by_topic  = _df_topics_exploded.groupby('_tl')['engagement_score'].sum().to_
 men_by_topic  = _df_topics_exploded.groupby('_tl')['id'].nunique().to_dict()
 view_by_topic = _df_topics_exploded.groupby('_tl')['view_count'].sum().to_dict()
 
+# --- Campaign-axis explode ---
+_df_campaigns = df.copy()
+_df_campaigns['engagement_score'] = pd.to_numeric(_df_campaigns['engagement_score'], errors='coerce').fillna(0)
+if 'view_count' not in _df_campaigns.columns: _df_campaigns['view_count'] = 0
+_df_campaigns['view_count'] = pd.to_numeric(_df_campaigns['view_count'], errors='coerce').fillna(0)
+if 'Campaign' in _df_campaigns.columns:
+    _df_campaigns['_cl'] = _df_campaigns['Campaign'].apply(_clean_split)
+else:
+    _df_campaigns['_cl'] = [['(no campaign)']] * len(_df_campaigns)
+_df_campaigns_exploded = _df_campaigns.explode('_cl')
+_df_campaigns_exploded = _df_campaigns_exploded[_df_campaigns_exploded['_cl'].notna() & (_df_campaigns_exploded['_cl'] != '')]
+eng_by_campaign  = _df_campaigns_exploded.groupby('_cl')['engagement_score'].sum().to_dict()
+men_by_campaign  = _df_campaigns_exploded.groupby('_cl')['id'].nunique().to_dict()
+view_by_campaign = _df_campaigns_exploded.groupby('_cl')['view_count'].sum().to_dict()
+
 # --- Source metrics (source is not exploded, one value per row) ---
 view_by_source = df.groupby('source')['view_count'].sum().to_dict() if 'source' in df.columns and 'view_count' in df.columns else {}
 eng_by_source  = df.groupby('source')['engagement_score'].sum().to_dict() if 'source' in df.columns else {}
@@ -1686,12 +1816,15 @@ _js_payload = json.dumps({
     'metrics': {
         'engagement': {'brand': {k:float(v) for k,v in eng_by_brand.items()},
                        'topic': {k:float(v) for k,v in eng_by_topic.items()},
+                       'campaign': {k:float(v) for k,v in eng_by_campaign.items()},
                        'source':{k:float(v) for k,v in eng_by_source.items()}},
         'mention':    {'brand': {k:int(v)   for k,v in men_by_brand.items()},
                        'topic': {k:int(v)   for k,v in men_by_topic.items()},
+                       'campaign': {k:int(v) for k,v in men_by_campaign.items()},
                        'source':{k:int(v)   for k,v in men_by_source.items()}},
         'view':       {'brand': {k:float(v) for k,v in view_by_brand.items()},
                        'topic': {k:float(v) for k,v in view_by_topic.items()},
+                       'campaign': {k:float(v) for k,v in view_by_campaign.items()},
                        'source':{k:float(v) for k,v in view_by_source.items()}},
     },
     'brandTopicSent': _brand_topic_sent,   # {brand: {topic: {pos,neu,neg}}}
@@ -1708,7 +1841,7 @@ _gr_df = df[_gr_mask].copy()
 # Only keep columns the GR panel actually uses — avoids serialising unused wide columns
 _gr_keep = [c for c in ['id','source','text','sentiment','created_at','date','engagement_score',
                          'view_count','comment_count','like_count','share_count','retweet_count','reply_count',
-                         'Brands','Topics','Detail','detail','Category','category',
+                         'Brands','Topics','Campaign','campaign','Detail','detail','Category','category',
                          'link','Link','url','URL','post_url','post_link','permalink','source_url',
                          'title','Title','page','Page',
                          'branch','Branch','location','Location'] if c in _gr_df.columns]
@@ -1749,6 +1882,11 @@ _all_rows_payload = '__LAZY__'
     brandChannelEng:  payload.brandChannelEng  || {},
     brandChannelMen:  payload.brandChannelMen  || {},
     brandChannelView: payload.brandChannelView || {},
+    campaignMetrics: {
+      engagement: payload.metrics?.engagement?.campaign || {},
+      mention:    payload.metrics?.mention?.campaign    || {},
+      view:       payload.metrics?.view?.campaign       || {},
+    },
     csvBlob:          null,
   };
 
@@ -1775,6 +1913,9 @@ _buf.getvalue()
 function renderReport() {
   document.getElementById('reportEmpty').style.display='none';
   document.getElementById('reportContent').style.display='';
+
+  // Pre-render campaign tab data (non-blocking, uses metrics already in reportData)
+  if (reportData.campaignMetrics) renderCampaignTab();
 
   const today=new Date();
   today.setMonth(today.getMonth() - 1);
@@ -1831,6 +1972,494 @@ function renderReport() {
     a.click();
   };
 }
+
+// ── CAMPAIGN TAB ──────────────────────────────────────────────────────────────
+let campActiveCampaign = null;
+let campPostLimit  = 5;
+let campPostSent   = 'all';
+
+const CAMP_COLORS = [
+  '#2563EB','#7c3aed','#0ea5e9','#10b981','#f59e0b',
+  '#ef4444','#ec4899','#14b8a6','#6366f1','#84cc16',
+];
+
+function _buildCampCards(camps, metrics) {
+  const engMap = metrics.engagement || {};
+
+  const top20 = camps
+    .filter(c => c.toLowerCase() !== 'others')
+    .sort((a, b) => {
+      const aIs26 = a.startsWith('2026'), bIs26 = b.startsWith('2026');
+      if (aIs26 !== bIs26) return aIs26 ? -1 : 1;
+      return (engMap[b]||0) - (engMap[a]||0);
+    })
+    .slice(0, 20);
+
+  const WARM = [
+    '#E07A5F','#F2A65A','#F4C04C','#81B29A','#6B9AC4',
+    '#C97B84','#E8956D','#F0B97B','#A8C5A0','#7EB5D6',
+    '#D4856A','#EDAA82','#F7CE7A','#95C4A8','#88B8D4',
+    '#C07068','#E89A72','#F6C86A','#8BBFA4','#79AECB',
+  ];
+
+  const container = document.getElementById('campPillsContainer');
+  container.innerHTML = '';
+  const lbl = document.getElementById('campActiveLabel');
+  if (lbl) lbl.textContent = campActiveCampaign ? '— ' + campActiveCampaign : '';
+
+  container.style.cssText = 'display:grid;grid-template-columns:repeat(5,1fr);gap:7px';
+
+  top20.forEach((c, i) => {
+    const isActive = c === campActiveCampaign;
+    const base = WARM[i % WARM.length];
+    const pill = document.createElement('button');
+    pill.style.cssText = `padding:7px 10px;border-radius:8px;font-size:11px;font-weight:600;
+      cursor:pointer;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;text-align:center;
+      transition:all .15s;border:2px solid ${isActive ? base : base+'55'};
+      background:${isActive ? base : base+'22'};color:${isActive ? '#fff' : base};
+      box-shadow:${isActive ? '0 2px 8px '+base+'55' : 'none'};`;
+    pill.title = c;
+    pill.textContent = c;
+    pill.addEventListener('mouseenter', () => {
+      if (!isActive) { pill.style.background = base+'44'; pill.style.borderColor = base; }
+    });
+    pill.addEventListener('mouseleave', () => {
+      if (!isActive) { pill.style.background = base+'22'; pill.style.borderColor = base+'55'; }
+    });
+    pill.addEventListener('click', () => {
+      campActiveCampaign = isActive ? null : c;
+      if (!isActive) { campPostSent='all'; campPostLimit=5; document.querySelectorAll('[data-camp-sent]').forEach(x=>x.classList.toggle('active',x.dataset.campSent==='all')); }
+      renderCampaignTab();
+    });
+    container.appendChild(pill);
+  });
+}
+
+function renderCampaignTab() {
+  const metrics = reportData.campaignMetrics;
+  const camps = Object.keys(metrics?.mention || {}).filter(k => k && k !== '(no campaign)').sort();
+  const hasCampaigns = camps.length > 0;
+
+  document.getElementById('campaignEmpty').style.display   = hasCampaigns ? 'none' : '';
+  document.getElementById('campaignContent').style.display = hasCampaigns ? ''     : 'none';
+  if (!hasCampaigns) return;
+
+  // Validate campActiveCampaign
+  if (campActiveCampaign && !camps.includes(campActiveCampaign)) {
+    campActiveCampaign = null;
+  }
+
+  _buildCampCards(camps, metrics);
+
+  // Nothing selected yet — show prompt, hide detail
+  if (!campActiveCampaign) {
+    document.getElementById('campSelectPrompt').style.display = '';
+    document.getElementById('campDetail').style.display       = 'none';
+    return;
+  }
+
+  // Campaign selected — hide prompt, show detail
+  document.getElementById('campSelectPrompt').style.display = 'none';
+  document.getElementById('campDetail').style.display       = '';
+
+  _renderCampKpis(metrics);
+  _renderCampChannelTable();
+  _renderCampChannelBars();
+  _renderCampMentionBars();
+  _renderCampSentDonut();
+  renderCampPosts();
+}
+
+function _renderCampKpis(metrics) {
+  const men  = (metrics.mention    || {})[campActiveCampaign] || 0;
+  const eng  = (metrics.engagement || {})[campActiveCampaign] || 0;
+
+  // Sentiment from raw data for this campaign only
+  const pool = (allRawData.length ? allRawData : rawData);
+  let pos=0, neu=0, neg=0;
+  pool.forEach(r => {
+    let raw = String(r.Campaign||r.campaign||'').trim();
+    if (raw.startsWith('[') && raw.endsWith(']')) raw = raw.slice(1,-1);
+    if (!raw.split(',').map(x=>x.trim()).includes(campActiveCampaign)) return;
+    const s = String(r.sentiment||'').toLowerCase();
+    if (s==='positive') pos++;
+    else if (s==='neutral') neu++;
+    else if (s==='negative') neg++;
+  });
+  const total = pos+neu+neg || 1;
+
+  document.getElementById('campKpiRow').innerHTML = `
+    <div class="bdd-kpi eng">
+      <div class="bdd-kpi-val">${Math.round(eng).toLocaleString()}</div>
+      <div class="bdd-kpi-lbl">Engagement</div>
+    </div>
+    <div class="bdd-kpi">
+      <div class="bdd-kpi-val">${men.toLocaleString()}</div>
+      <div class="bdd-kpi-lbl">Mentions</div>
+    </div>
+    <div class="bdd-kpi pos">
+      <div class="bdd-kpi-val">${Math.round(pos/total*100)}%</div>
+      <div class="bdd-kpi-lbl">Positive</div>
+    </div>
+    <div class="bdd-kpi neg">
+      <div class="bdd-kpi-val">${Math.round(neg/total*100)}%</div>
+      <div class="bdd-kpi-lbl">Negative</div>
+    </div>
+  `;
+}
+
+function _campPostsForActive() {
+  const pool = (allRawData.length ? allRawData : rawData);
+  return pool.filter(r => {
+    let raw = String(r.Campaign||r.campaign||'').trim();
+    if (raw.startsWith('[') && raw.endsWith(']')) raw = raw.slice(1,-1);
+    return raw.split(',').map(x=>x.trim()).includes(campActiveCampaign);
+  });
+}
+
+function _renderCampChannelTable() {
+  const posts = _campPostsForActive();
+  // Build { channel: { engagement, mention, positive, neutral, negative } }
+  const chMap = {};
+  posts.forEach(r => {
+    const ch  = normalizeChannel(String(r.source||r.Source||''));
+    const eng = parseFloat(r.engagement_score)||0;
+    const s   = String(r.sentiment||'').toLowerCase();
+    if (!chMap[ch]) chMap[ch] = { engagement:0, mention:0, positive:0, neutral:0, negative:0 };
+    chMap[ch].engagement += eng;
+    chMap[ch].mention++;
+    if (chMap[ch][s] !== undefined) chMap[ch][s]++;
+  });
+
+  const rows = Object.entries(chMap).sort((a,b)=>b[1].engagement-a[1].engagement);
+  const tbody = document.getElementById('campTBody');
+  tbody.innerHTML = '';
+
+  rows.forEach(([ch, d]) => {
+    const tot  = (d.positive+d.neutral+d.negative)||1;
+    const posPct = Math.round(d.positive/tot*100);
+    const neuPct = Math.round(d.neutral/tot*100);
+    const negPct = 100-posPct-neuPct;
+    const color  = CHANNEL_COLORS[ch]||'#6B7280';
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td style="font-weight:600;display:flex;align-items:center;gap:7px">
+        <span style="width:9px;height:9px;border-radius:50%;background:${color};display:inline-block;flex-shrink:0"></span>${escapeHtml(ch)}
+      </td>
+      <td class="num" style="font-weight:700;color:var(--accent)">${Math.round(d.engagement).toLocaleString()}</td>
+      <td class="num">${d.mention.toLocaleString()}</td>
+      <td class="num" style="color:var(--pos);font-weight:600">${posPct}%</td>
+      <td class="num" style="color:var(--neu);font-weight:600">${neuPct}%</td>
+      <td class="num" style="color:var(--neg);font-weight:600">${negPct}%</td>
+      <td>
+        <div class="camp-sent-bar">
+          <div class="camp-sent-seg" style="width:${posPct}%;background:var(--pos)"></div>
+          <div class="camp-sent-seg" style="width:${neuPct}%;background:var(--neu)"></div>
+          <div class="camp-sent-seg" style="width:${negPct}%;background:var(--neg)"></div>
+        </div>
+      </td>`;
+    tbody.appendChild(tr);
+  });
+
+  if (!rows.length) {
+    tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:20px;color:var(--text3);font-size:12px">No channel data for this campaign</td></tr>`;
+  }
+}
+
+function _renderCampChannelIcons() {
+  const posts  = _campPostsForActive();
+  const chMap  = {};
+  posts.forEach(r => {
+    const ch  = normalizeChannel(String(r.source||r.Source||''));
+    const eng = parseFloat(r.engagement_score)||0;
+    if (!chMap[ch]) chMap[ch] = 0;
+    chMap[ch] += eng;
+  });
+  const sorted   = Object.entries(chMap).sort((a,b)=>b[1]-a[1]);
+  const totalEng = sorted.reduce((s,[,v])=>s+v, 0) || 1;
+  const el = document.getElementById('campChannelIcons');
+  if (!el) return;
+  el.innerHTML = '';
+  if (!sorted.length) return;
+  sorted.forEach(([ch, eng]) => {
+    const ICON_WHITELIST = ['Facebook','TikTok','Instagram','X (Twitter)'];
+    if (!ICON_WHITELIST.includes(ch)) return;
+    const sharePct = (eng/totalEng*100).toFixed(2);
+    const color    = CHANNEL_COLORS[ch] || '#6B7280';
+    const svgIcon  = CHANNEL_SVGS[ch]   || CHANNEL_SVGS['Website'];
+    const tile     = document.createElement('div');
+    tile.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:5px;min-width:64px;padding:10px 8px;background:var(--bg);border:1px solid var(--border);border-radius:10px;flex:0 0 auto';
+    tile.innerHTML = `
+      <div style="width:36px;height:36px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;overflow:hidden;padding:5px;flex-shrink:0">
+        ${svgIcon}
+      </div>
+
+      <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:${color};background:${color}18;border-radius:4px;padding:1px 5px">${sharePct}%</div>
+    `;
+    el.appendChild(tile);
+  });
+}
+
+function _renderCampChannelBars() {
+  _renderCampChannelIcons();
+  const posts  = _campPostsForActive();
+  const chMap  = {};
+  posts.forEach(r => {
+    const ch  = normalizeChannel(String(r.source||r.Source||''));
+    const eng = parseFloat(r.engagement_score)||0;
+    if (!chMap[ch]) chMap[ch] = 0;
+    chMap[ch] += eng;
+  });
+  const sorted   = Object.entries(chMap).sort((a,b)=>b[1]-a[1]);
+  const maxEng   = sorted[0]?.[1] || 1;
+  const totalEng = sorted.reduce((s,[,v])=>s+v, 0) || 1;
+  const el = document.getElementById('campChannelBars');
+  el.innerHTML = '';
+  if (!sorted.length) { el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:12px 0">No data</div>'; return; }
+  sorted.forEach(([ch, eng]) => {
+    const barPct   = eng/maxEng*100;
+    const sharePct = (eng/totalEng*100).toFixed(2);
+    const color    = CHANNEL_COLORS[ch]||'#6B7280';
+    const row      = document.createElement('div');
+    row.className  = 'camp-bar-wrap';
+    row.innerHTML  = `
+      <div style="display:flex;align-items:center;gap:5px;min-width:110px;max-width:130px">
+        <span style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block"></span>
+        <span class="camp-bar-label" style="min-width:0">${escapeHtml(ch)}</span>
+      </div>
+      <div class="camp-bar-track"><div class="camp-bar-fill" style="width:0%;background:${color}" data-pct="${barPct}"></div></div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="camp-bar-val">${Math.round(eng).toLocaleString()}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:${color};background:${color}18;border-radius:5px;padding:1px 6px;min-width:38px;text-align:center">${sharePct}%</div>
+      </div>`;
+    el.appendChild(row);
+  });
+
+  requestAnimationFrame(()=>{ el.querySelectorAll('.camp-bar-fill').forEach(f=>{ f.style.width=f.dataset.pct+'%'; }); });
+}
+
+function _renderCampMentionIcons() {
+  const posts  = _campPostsForActive();
+  const chMap  = {};
+  posts.forEach(r => {
+    const ch = normalizeChannel(String(r.source||r.Source||''));
+    if (!chMap[ch]) chMap[ch] = 0;
+    chMap[ch]++;
+  });
+  const sorted    = Object.entries(chMap).sort((a,b)=>b[1]-a[1]);
+  const totalMen  = sorted.reduce((s,[,v])=>s+v, 0) || 1;
+  const el = document.getElementById('campMentionIcons');
+  if (!el) return;
+  el.innerHTML = '';
+  sorted.forEach(([ch, cnt]) => {
+    const ICON_WHITELIST = ['Facebook','TikTok','Instagram','X (Twitter)'];
+    if (!ICON_WHITELIST.includes(ch)) return;
+    const sharePct = (cnt/totalMen*100).toFixed(2);
+    const color    = CHANNEL_COLORS[ch] || '#6B7280';
+    const svgIcon  = CHANNEL_SVGS[ch]   || CHANNEL_SVGS['Website'];
+    const tile     = document.createElement('div');
+    tile.style.cssText = 'display:flex;flex-direction:column;align-items:center;gap:5px;min-width:64px;padding:10px 8px;background:var(--bg);border:1px solid var(--border);border-radius:10px;flex:0 0 auto';
+    tile.innerHTML = `
+      <div style="width:36px;height:36px;border-radius:50%;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.12);display:flex;align-items:center;justify-content:center;overflow:hidden;padding:5px;flex-shrink:0">
+        ${svgIcon}
+      </div>
+
+      <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:600;color:${color};background:${color}18;border-radius:4px;padding:1px 5px">${sharePct}%</div>`;
+    el.appendChild(tile);
+  });
+}
+
+function _renderCampMentionBars() {
+  _renderCampMentionIcons();
+  const posts  = _campPostsForActive();
+  const chMap  = {};
+  posts.forEach(r => {
+    const ch = normalizeChannel(String(r.source||r.Source||''));
+    if (!chMap[ch]) chMap[ch] = 0;
+    chMap[ch]++;
+  });
+  const sorted   = Object.entries(chMap).sort((a,b)=>b[1]-a[1]);
+  const maxMen   = sorted[0]?.[1] || 1;
+  const totalMen = sorted.reduce((s,[,v])=>s+v, 0) || 1;
+  const el = document.getElementById('campMentionBars');
+  el.innerHTML = '';
+  if (!sorted.length) { el.innerHTML='<div style="color:var(--text3);font-size:12px;padding:12px 0">No data</div>'; return; }
+  sorted.forEach(([ch, cnt]) => {
+    const barPct   = cnt/maxMen*100;
+    const sharePct = (cnt/totalMen*100).toFixed(2);
+    const color    = CHANNEL_COLORS[ch]||'#6B7280';
+    const row      = document.createElement('div');
+    row.className  = 'camp-bar-wrap';
+    row.innerHTML  = `
+      <div style="display:flex;align-items:center;gap:5px;min-width:110px;max-width:130px">
+        <span style="width:8px;height:8px;border-radius:50%;background:${color};flex-shrink:0;display:inline-block"></span>
+        <span class="camp-bar-label" style="min-width:0">${escapeHtml(ch)}</span>
+      </div>
+      <div class="camp-bar-track"><div class="camp-bar-fill" style="width:0%;background:${color}" data-pct="${barPct}"></div></div>
+      <div style="display:flex;align-items:center;gap:6px;flex-shrink:0">
+        <div class="camp-bar-val">${cnt.toLocaleString()}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:${color};background:${color}18;border-radius:5px;padding:1px 6px;min-width:38px;text-align:center">${sharePct}%</div>
+      </div>`;
+    el.appendChild(row);
+  });
+  requestAnimationFrame(()=>{ el.querySelectorAll('.camp-bar-fill').forEach(f=>{ f.style.width=f.dataset.pct+'%'; }); });
+}
+
+function _renderCampSentDonut() {
+  const posts = _campPostsForActive();
+  let pos=0, neu=0, neg=0;
+  posts.forEach(r => {
+    const s = String(r.sentiment||'').toLowerCase();
+    if (s==='positive') pos++;
+    else if (s==='neutral') neu++;
+    else if (s==='negative') neg++;
+  });
+  const total = pos+neu+neg||1;
+  const el = document.getElementById('campSentDonut');
+  el.innerHTML = '';
+
+  const segments = [
+    { label:'Negative', val:neg, color:SENT_COLORS.negative },
+    { label:'Neutral',  val:neu, color:SENT_COLORS.neutral  },
+    { label:'Positive', val:pos, color:SENT_COLORS.positive },
+  ];
+
+  // ── Donut SVG ──
+  const size=148, cx=74, cy=74, r=54, stroke=20;
+  const circ = 2*Math.PI*r;
+  let offset = 0;
+  let paths = '';
+  segments.forEach(seg => {
+    const pct  = seg.val/total;
+    const dash = pct*circ;
+    const gap  = circ - dash;
+    paths += `<circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="${seg.color}" stroke-width="${stroke}"
+      stroke-dasharray="${dash} ${gap}" stroke-dashoffset="${-offset}"
+      transform="rotate(-90 ${cx} ${cy})" stroke-linecap="butt"/>`;
+    offset += dash;
+  });
+  const donutSvg = `<svg width="${size}" height="${size}" viewBox="0 0 ${size} ${size}" style="flex-shrink:0">
+    <circle cx="${cx}" cy="${cy}" r="${r}" fill="none" stroke="var(--border)" stroke-width="${stroke}"/>
+    ${paths}
+    <text x="${cx}" y="${cy-7}" text-anchor="middle" font-family="'Bricolage Grotesque',sans-serif" font-size="20" font-weight="800" fill="var(--text)">${Math.round(pos/total*100)}%</text>
+    <text x="${cx}" y="${cy+11}" text-anchor="middle" font-family="'DM Sans',sans-serif" font-size="9" font-weight="700" fill="var(--text3)" letter-spacing="1.2">POSITIVE</text>
+  </svg>`;
+
+  // ── Stacked bar ──
+  const barSegs = segments.map(s => {
+    const pct    = (s.val/total*100);
+    const pctStr = Math.round(pct) + '%';
+    return `<div class="camp-stk-seg" data-pct="${pct}" style="flex:0 0 0%;background:${s.color};display:flex;align-items:center;justify-content:center;overflow:hidden;transition:flex-basis .7s cubic-bezier(.16,1,.3,1);position:relative">
+      <span style="font-family:'DM Mono',monospace;font-size:12px;font-weight:800;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.35);white-space:nowrap;letter-spacing:.3px">${pctStr}</span>
+    </div>`;
+  }).join('');
+
+  // ── Legend ──
+  const legend = segments.map(s => `
+    <div style="display:flex;align-items:center;gap:7px;font-size:12px;padding:4px 0">
+      <span style="width:10px;height:10px;border-radius:3px;background:${s.color};flex-shrink:0"></span>
+      <span style="color:var(--text2);font-weight:600">${s.label}</span>
+      <span style="margin-left:auto;font-family:'DM Mono',monospace;font-size:11px;color:var(--text3)">${s.val.toLocaleString()}</span>
+      <span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:700;color:${s.color};background:${s.color}18;border-radius:4px;padding:1px 6px;min-width:42px;text-align:center">${Math.round(s.val/total*100)}%</span>
+    </div>`).join('');
+
+  el.innerHTML = `
+    <div style="display:flex;gap:24px;align-items:center;flex-wrap:wrap">
+      ${donutSvg}
+      <div style="flex:1;min-width:220px;display:flex;flex-direction:column;gap:14px">
+        <div style="height:36px;border-radius:8px;overflow:hidden;display:flex;width:100%;box-shadow:0 1px 3px rgba(0,0,0,.1)">
+          ${barSegs}
+        </div>
+        <div style="display:flex;flex-direction:column;gap:2px">${legend}</div>
+      </div>
+    </div>`;
+
+  requestAnimationFrame(() => {
+    el.querySelectorAll('.camp-stk-seg').forEach(seg => {
+      seg.style.flexBasis = seg.dataset.pct + '%';
+    });
+  });
+}
+
+function renderCampPosts() {
+  const posts = _campPostsForActive();
+  let filtered = posts.filter(r => {
+    const text = String(r.text||'').trim();
+    if (!text || text==='null') return false;
+    if (campPostSent!=='all' && String(r.sentiment||'').toLowerCase()!==campPostSent) return false;
+    return true;
+  });
+  filtered.sort((a,b)=>(parseFloat(b.engagement_score)||0)-(parseFloat(a.engagement_score)||0));
+
+  const el   = document.getElementById('campTopPosts');
+  el.innerHTML = '';
+  const slice = filtered.slice(0, campPostLimit);
+
+  if (!slice.length) {
+    el.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3);font-size:12px">No posts match the current filter</div>';
+    document.getElementById('campLoadMorePosts').style.display='none';
+    return;
+  }
+
+  slice.forEach((row, idx) => {
+    const sent     = String(row.sentiment||'').toLowerCase();
+    const src      = normalizeChannel(String(row.source||row.Source||'').trim());
+    const srcColor = CHANNEL_COLORS[src]||'#6B7280';
+    const dateRaw  = row.created_at||row.date||row.Date||row.Created_At||'';
+    const date     = _formatPostDate(dateRaw);
+    const eng      = parseFloat(row.engagement_score)||0;
+    const views    = parseFloat(row.view_count)||0;
+    const comments = parseFloat(row.comment_count)||0;
+    const likes    = parseFloat(row.like_count)||0;
+    const text     = String(row.text||'').trim();
+    const link     = _grGet(row,'link','Link','url','URL','post_url','post_link','permalink','source_url');
+    const hasLink  = link&&link.startsWith('http');
+
+    const item = document.createElement('div');
+    item.className = 'bdd-post-item';
+    item.innerHTML = `
+      <div class="bdd-post-rank">${idx+1}</div>
+      <div class="bdd-post-body">
+        <div class="bdd-post-meta">
+          ${src  ? `<span class="bdd-post-source" style="border-left:3px solid ${srcColor};padding-left:6px">${escapeHtml(src)}</span>` : ''}
+          ${date ? `<span class="bdd-post-date">📅 ${escapeHtml(date)}</span>` : ''}
+          ${sent ? `<span class="badge ${sent}" style="font-size:10px">${sent}</span>` : ''}
+          ${hasLink ? `<a href="${escapeHtml(link)}" target="_blank" rel="noopener noreferrer" class="bdd-post-link">↗ View post</a>` : ''}
+        </div>
+        <div class="bdd-post-text">${escapeHtml(text)}</div>
+        <div class="bdd-post-stats">
+          ${eng      ? `<span class="bdd-post-stat">⚡ <strong>${eng.toLocaleString()}</strong> engagement</span>` : ''}
+          ${comments ? `<span class="bdd-post-stat">💬 <strong>${comments.toLocaleString()}</strong> comments</span>` : ''}
+          ${views    ? `<span class="bdd-post-stat">👁 <strong>${views.toLocaleString()}</strong> views</span>` : ''}
+          ${likes    ? `<span class="bdd-post-stat">❤️ <strong>${likes.toLocaleString()}</strong> likes</span>` : ''}
+        </div>
+      </div>`;
+    el.appendChild(item);
+  });
+
+  const loadBtn = document.getElementById('campLoadMorePosts');
+  if (filtered.length > campPostLimit) {
+    loadBtn.style.display = '';
+    loadBtn.textContent = `Load more posts (${(filtered.length-campPostLimit).toLocaleString()} remaining)`;
+  } else {
+    loadBtn.style.display = 'none';
+  }
+}
+
+// Campaign event wiring
+document.getElementById('campLoadMorePosts').addEventListener('click', () => {
+  campPostLimit += 5;
+  renderCampPosts();
+});
+document.querySelectorAll('[data-camp-sent]').forEach(btn => {
+  btn.addEventListener('click', () => {
+    document.querySelectorAll('[data-camp-sent]').forEach(b=>b.classList.remove('active'));
+    btn.classList.add('active');
+    campPostSent  = btn.dataset.campSent;
+    campPostLimit = 5;
+    renderCampPosts();
+  });
+});
 
 // ── OVERVIEW TAB ─────────────────────────────────────────────────────────────
 let ovMetric = 'both'; // kept for backward compat but no longer used as toggle
@@ -2108,6 +2737,20 @@ const TOPIC_ORDER  = ['product','promotion','price','branding','service','activi
 // ── CHANNEL NORMALISATION ─────────────────────────────────────────────────────
 // Fixed channel list — everything not matched falls through to Website
 const CANONICAL_CHANNELS = ['Facebook','X (Twitter)','TikTok','Pantip','YouTube','Instagram','Google Review','Lemon8','LineVoom','Blockdit','Website'];
+const CHANNEL_SVGS = {
+  'Facebook':      `<svg viewBox="0 0 24 24" fill="#1877F2"><path d="M24 12.073C24 5.405 18.627 0 12 0S0 5.405 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.93-1.956 1.886v2.269h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>`,
+  'TikTok':        `<svg viewBox="0 0 24 24" fill="#010101"><path d="M12.525.02c1.31-.02 2.61-.01 3.91-.02.08 1.53.63 3.09 1.75 4.17 1.12 1.11 2.7 1.62 4.24 1.79v4.03c-1.44-.05-2.89-.35-4.2-.97-.57-.26-1.1-.59-1.62-.93-.01 2.92.01 5.84-.02 8.75-.08 1.4-.54 2.79-1.35 3.94-1.31 1.92-3.58 3.17-5.91 3.21-1.43.08-2.86-.31-4.08-1.03-2.02-1.19-3.44-3.37-3.65-5.71-.02-.5-.03-1-.01-1.49.18-1.9 1.12-3.72 2.58-4.96 1.66-1.44 3.98-2.13 6.15-1.72.02 1.48-.04 2.96-.04 4.44-.99-.32-2.15-.23-3.02.37-.63.41-1.11 1.04-1.36 1.75-.21.51-.15 1.07-.14 1.61.24 1.64 1.82 3.02 3.5 2.87 1.12-.01 2.19-.66 2.77-1.61.19-.33.4-.67.41-1.06.1-1.79.06-3.57.07-5.36.01-4.03-.01-8.05.02-12.07z"/></svg>`,
+  'Instagram':     `<svg viewBox="0 0 24 24"><defs><linearGradient id="ig" x1="0%" y1="100%" x2="100%" y2="0%"><stop offset="0%" stop-color="#f09433"/><stop offset="25%" stop-color="#e6683c"/><stop offset="50%" stop-color="#dc2743"/><stop offset="75%" stop-color="#cc2366"/><stop offset="100%" stop-color="#bc1888"/></linearGradient></defs><path fill="url(#ig)" d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zM12 0C8.741 0 8.333.014 7.053.072 2.695.272.273 2.69.073 7.052.014 8.333 0 8.741 0 12c0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98C8.333 23.986 8.741 24 12 24c3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98C15.668.014 15.259 0 12 0zm0 5.838a6.162 6.162 0 100 12.324 6.162 6.162 0 000-12.324zM12 16a4 4 0 110-8 4 4 0 010 8zm6.406-11.845a1.44 1.44 0 100 2.881 1.44 1.44 0 000-2.881z"/></svg>`,
+  'X (Twitter)':   `<svg viewBox="0 0 24 24" fill="#000000"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.747l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>`,
+  'YouTube':       `<svg viewBox="0 0 24 24" fill="#FF0000"><path d="M23.495 6.205a3.007 3.007 0 00-2.088-2.088c-1.87-.501-9.396-.501-9.396-.501s-7.507-.01-9.396.501A3.007 3.007 0 00.527 6.205a31.247 31.247 0 00-.522 5.805 31.247 31.247 0 00.522 5.783 3.007 3.007 0 002.088 2.088c1.868.502 9.396.502 9.396.502s7.506 0 9.396-.502a3.007 3.007 0 002.088-2.088 31.247 31.247 0 00.5-5.783 31.247 31.247 0 00-.5-5.805zM9.609 15.601V8.408l6.264 3.602z"/></svg>`,
+  'Pantip':        `<svg viewBox="0 0 24 24" fill="#EC008C"><rect width="24" height="24" rx="6"/><text x="12" y="17" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="800" fill="#fff">P</text></svg>`,
+  'Google Review': `<svg viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l3.66-2.84z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>`,
+  'Lemon8':        `<svg viewBox="0 0 24 24" fill="#FFD700"><rect width="24" height="24" rx="8" fill="#FFD700"/><text x="12" y="17" text-anchor="middle" font-family="sans-serif" font-size="12" font-weight="800" fill="#333">L8</text></svg>`,
+  'LineVoom':      `<svg viewBox="0 0 24 24" fill="#06C755"><rect width="24" height="24" rx="8" fill="#06C755"/><path fill="#fff" d="M12 4C7.582 4 4 7.163 4 11.077c0 3.546 3.146 6.519 7.4 7.082.288.062.68.19.78.437.089.224.058.575.028.801l-.126.756c-.038.224-.178.876.768.477.946-.4 5.108-3.007 6.969-5.147C21.108 13.88 22 12.559 22 11.077 22 7.163 18.418 4 12 4z"/></svg>`,
+  'Blockdit':      `<svg viewBox="0 0 24 24" fill="#1A237E"><rect width="24" height="24" rx="6" fill="#1A237E"/><text x="12" y="17" text-anchor="middle" font-family="sans-serif" font-size="11" font-weight="800" fill="#fff">BD</text></svg>`,
+  'Website':       `<svg viewBox="0 0 24 24" fill="#6B7280"><path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-1 17.93c-3.95-.49-7-3.85-7-7.93 0-.62.08-1.21.21-1.79L9 15v1c0 1.1.9 2 2 2v1.93zm6.9-2.54c-.26-.81-1-1.39-1.9-1.39h-1v-3c0-.55-.45-1-1-1H8v-2h2c.55 0 1-.45 1-1V7h2c1.1 0 2-.9 2-2v-.41c2.93 1.19 5 4.06 5 7.41 0 2.08-.8 3.97-2.1 5.39z"/></svg>`,
+};
+
 const CHANNEL_COLORS = {
   'Facebook':      '#1877F2',
   'X (Twitter)':   '#000000',
@@ -3283,9 +3926,11 @@ document.querySelectorAll('.tab-btn').forEach(btn=>{
     btn.classList.add('active');
     document.getElementById('panel-'+btn.dataset.tab).classList.add('active');
     // Lazy-load full pandas rows on first visit to AI or Brand Deep-Dive tab
-    if ((btn.dataset.tab === 'ai' || btn.dataset.tab === 'brand') && rawData.length && !allRawData.length) {
+    if ((btn.dataset.tab === 'ai' || btn.dataset.tab === 'brand' || btn.dataset.tab === 'campaign') && rawData.length && !allRawData.length) {
       _loadAllRawData();
     }
+    if (btn.dataset.tab === 'campaign' && reportData.campaignMetrics) renderCampaignTab();
+
   });
 });
 
@@ -3303,7 +3948,7 @@ _all_df2 = _all_df2.where(_all_df2.notna(), other=None)
 # Only keep columns useful to the UI to reduce payload size
 _keep_cols = [c for c in ['id','source','Source','text','Text','sentiment','created_at','date',
     'engagement_score','view_count','comment_count','like_count','share_count','retweet_count','reply_count',
-    'Brands','Topics','Detail','detail','Category','category',
+    'Brands','Topics','Campaign','campaign','Detail','detail','Category','category',
     'link','Link','url','URL','post_url','post_link','permalink','source_url',
     'title','Title','page','Page',
     'branch','Branch','location','Location'] if c in _all_df2.columns]
@@ -3314,6 +3959,7 @@ _all_df2.to_json(orient='records', force_ascii=False)
     // Refresh panels that use allRawData now that it's available
     if (document.querySelector('.tab-btn[data-tab="ai"]')?.classList.contains('active')) updateAiPanel();
     if (document.querySelector('.tab-btn[data-tab="brand"]')?.classList.contains('active')) updateBrandDeepDive();
+    if (document.querySelector('.tab-btn[data-tab="campaign"]')?.classList.contains('active')) renderCampaignTab();
   } catch(e) {
     console.warn('Lazy allRawData load failed, falling back to rawData:', e.toString());
     // Non-fatal: _aiPool() and bdd pool already fall back to rawData
@@ -3710,10 +4356,9 @@ End each bullet with a risk label: 🔴 High / 🟡 Medium / 🟢 Low.
 Maximum 5 pain points.
 
 Rules:
-- Never write generic observations. Every sentence must reference specific locations, or summarize the reviewer language.
+- Never write generic observations. Every sentence must reference specific locations, counts, or reviewer language from the data.
 - Do not include an introduction, preamble, or conclusion outside the four sections above.
 - Do not use phrases like "it is worth noting", "overall", "in summary", or any filler language.
-- Do not include raw mention counts or post counts except the section of Location Performance.
 - Write in tight, direct analyst prose — each bullet should be 1–2 sentences maximum.`;
 
   const user = `Analyse the following ${rows.length} Google Reviews for ${brandCtx} (filtered to ${sentCtx}).${focusPart}
