@@ -6635,9 +6635,9 @@ Describe what this campaign is about — the concept, creative direction, promot
 3–5 concise, high-value takeaways a brand manager must know. Each must be specific, evidence-backed, and actionable. Cover: overall performance vs expectation signals, standout wins, risks or missed opportunities, and one forward-looking implication. Bullet format.
 
 **Campaign Feedback**
-Summarise what the audience is actually saying. Group messages by frequency — identify the top recurring themes, phrases, or reactions in the posts. For each group: label the theme, describe the message pattern in 1–2 sentences, estimate its share of conversation, and note the dominant sentiment. At least 4 groups, ordered from most to least frequent.
+Summarise what the audience is actually saying. Group messages by frequency — identify the top recurring themes, phrases, or reactions in the posts. For each group: label the theme, describe the message pattern in 1–2 sentences, and note the dominant sentiment. At least 4 groups, ordered from most to least frequent.
 
-Rules: Every sentence must cite specific counts, engagement scores, or verbatim post language. No generic observations. Tight analyst prose, no filler.`;
+Rules:No generic marketing advice. Tight, direct analyst prose.`;
 
   const user = `Analyse ${rows.length} posts for campaign "${camp}" from ${source} (${sent}).
 ${sortCtx}
@@ -6689,12 +6689,12 @@ Your output MUST follow this exact structure using these exact section headers (
 State the full sentiment split (Positive X%, Neutral X%, Negative X%) with absolute post counts. Describe what the tone distribution implies about how the audience is receiving this campaign overall. Note any sentiment skew by channel and flag significant deviations.
 
 **Consumer Opinions & Emotional Drivers** [Objective 2]
-Identify the key opinions and emotions present in the data — what are people feeling and why. Group by dominant emotion (e.g. excitement, disappointment, trust, desire, frustration). For each: name the emotion, describe what is triggering it with specific post examples, and note its prevalence and engagement weight.
+Identify the key opinions and emotions present in the data — what are people feeling and why. Group by dominant emotion (e.g. excitement, disappointment, trust, desire, frustration). 
 
 **Praise Points, Pain Points & Unmet Needs** [Objective 3]
 Present three clearly separated sub-sections:
-— Praise Points: what the audience explicitly loves or celebrates, with post evidence.
-— Pain Points: recurring complaints, frustrations, or negative reactions, with post evidence.
+— Praise Points: what the audience explicitly loves or celebrates.
+— Pain Points: recurring complaints, frustrations, or negative reactions.
 — Unmet Needs & Expectations: what consumers wanted but did not get — gaps, wishlist items, or unresolved questions surfaced in the data.
 
 **Conversation Themes & Sub-Themes** [Objective 4]
@@ -6709,7 +6709,7 @@ Analyse how the audience is behaving around this campaign. Cover: which content 
 **Actionable Recommendations** [Objective 7]
 Provide 5–7 specific, prioritised recommendations for the marketing and communications team. Each must directly address a finding from the analysis above. Format: [Priority: High/Medium/Low] Recommendation — rationale in one sentence.
 
-Rules: Cite specific post text, exact sentiment counts, and engagement scores in every section. No filler language. Tight analyst prose.`;
+Rules: No generic marketing advice. Tight, direct analyst prose.`;
 
   const user = `Analyse sentiment in ${rows.length} posts for campaign "${camp}" from ${source} (${sent}).
 ${sortCtx}
@@ -6765,30 +6765,30 @@ Analyse all campaign-related content and conversations to uncover:
 Your output MUST follow this exact structure using these exact section headers (wrapped in **):
 
 **Top-Performing Content Themes** [Objective 1]
-Identify the content themes that generated the highest engagement and conversation volume. For each theme: label it, describe what made it resonate with the audience using specific post examples, state its share of total posts, and note its engagement level (High / Medium / Low). At least 4 themes, ordered from highest to lowest engagement.
+Identify the content themes that generated the highest engagement and conversation volume. For each theme: label it, describe what made it resonate with the audience. At least 4 themes, ordered from highest to lowest engagement.
 
 **Audience Engagement Drivers** [Objective 2]
-Explain why audiences engaged with this campaign's content. Identify the specific triggers — emotional hooks, calls to action, offer mechanics, social proof, humour, identity, etc. — and tie each driver to concrete post evidence and engagement scores.
+Explain why audiences engaged with this campaign's content. Identify the specific triggers — emotional hooks, calls to action, offer mechanics, social proof, humour, identity, etc. 
 
 **Effective Messaging Patterns** [Objective 3]
 Highlight the messaging formats, tones, and language patterns that consistently performed well. Identify recurring phrases, framing techniques, or narrative structures that drove response. Note any channel-specific messaging behaviour worth replicating.
 
 **Messaging Gaps & Missed Opportunities** [Objective 4]
-Identify where the campaign messaging fell short — topics the audience raised that the brand did not address, questions left unanswered, emotional angles not tapped, or channels underserved. Back each gap with evidence from the data.
+Identify where the campaign messaging fell short — topics the audience raised that the brand did not address, questions left unanswered, emotional angles not tapped, or channels underserved. 
 
 **High-Performing Creative Angles** [Objective 5]
 Surface the specific creative executions — formats, visual cues described in captions, hooks, storytelling approaches, influencer angles — that drove disproportionate engagement. Explain what made each angle effective and which audience segment responded most strongly.
 
 **Content Fatigue & Repetitive Execution** [Objective 6]
-Identify content patterns that appear overused, generated diminishing engagement, or triggered neutral/negative audience reactions. Flag specific themes or formats showing fatigue signals and estimate the share of posts affected.
+Identify content patterns that appear overused, generated diminishing engagement, or triggered neutral/negative audience reactions. 
 
 **Emerging Audience Interests** [Objective 7]
 Detect new or rising topics, behaviours, and interests appearing in audience conversations that are not yet central to the campaign narrative. Identify signals of shifting audience priorities or emerging trends the brand could capitalise on.
 
 **Recommended Future Content Directions** [Objective 8]
-Provide 5–7 specific, prioritised content recommendations for the next campaign phase. Each must be directly grounded in a finding above. Format: [Priority: High/Medium/Low] Recommendation — rationale in one sentence.
+Provide 3-5 specific, prioritised content recommendations for the next campaign phase. Each must be directly grounded in a finding above.
 
-Rules: Ground every observation in specific post text or engagement data. No generic marketing advice. Tight, direct analyst prose.`;
+Rules: No generic marketing advice. Tight, direct analyst prose.`;
 
   const user = `Analyse content themes and messaging in ${rows.length} posts for campaign "${camp}" from ${source} (${sent}).
 ${sortCtx}
