@@ -6616,7 +6616,7 @@ function _buildCampPerformancePrompts(rows) {
   const sortCtx     = sortBy==='engagement'?'Posts are ordered by highest engagement score first.':'Posts are in original order.';
 
   if (instruction) {
-    const postsBlock = rows.map((r)=>`[eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n');
+    const postsBlock = rows.map((r)=>r.text).join('\n');
     return {
       system: `You are a senior Campaign Performance Analyst. Follow the user's custom prompt precisely. ${sortCtx}`,
       user:   `Campaign: "${camp}" | Source: ${source} | Sentiment: ${sent}\n\n${instruction}\n\n--- POSTS START ---\n${postsBlock}\n--- POSTS END ---`,
@@ -6642,10 +6642,8 @@ Rules: Every sentence must cite specific counts, engagement scores, or verbatim 
   const user = `Analyse ${rows.length} posts for campaign "${camp}" from ${source} (${sent}).
 ${sortCtx}
 
-Each post: [eng:<score>] [<sentiment>] [<source>] <text>
-
 --- POSTS START ---
-${rows.map((r)=>`[eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n')}
+${rows.map((r)=>r.text).join('\n')}
 --- POSTS END ---
 
 Start directly with **Campaign Detail**.`;
@@ -6661,7 +6659,7 @@ function _buildCampSentimentPrompts(rows) {
   const sortCtx     = sortBy==='engagement'?'Posts are ordered by highest engagement score first.':'Posts are in original order.';
 
   if (instruction) {
-    const postsBlock = rows.map((r)=>`[eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n');
+    const postsBlock = rows.map((r)=>r.text).join('\n');
     return {
       system: `You are a senior Digital Marketing & Social Listening strategist specialising in Thai food & beverage brands. You analyse social media listening data and produce structured, insight-driven intelligence reports used by brand managers and marketing teams. Follow the user's custom prompt precisely. ${sortCtx}`,
       user:   `Campaign: "${camp}" | Source: ${source} | Sentiment: ${sent}\n\n${instruction}\n\n--- POSTS START ---\n${postsBlock}\n--- POSTS END ---`,
@@ -6716,10 +6714,8 @@ Rules: Cite specific post text, exact sentiment counts, and engagement scores in
   const user = `Analyse sentiment in ${rows.length} posts for campaign "${camp}" from ${source} (${sent}).
 ${sortCtx}
 
-Each post: [eng:<score>] [<sentiment>] [<source>] <text>
-
 --- POSTS START ---
-${rows.map((r)=>`[eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n')}
+${rows.map((r)=>r.text).join('\n')}
 --- POSTS END ---
 
 Start directly with **Overall Sentiment Analysis**.`;
@@ -6735,7 +6731,7 @@ function _buildCampContentPrompts(rows) {
   const sortCtx     = sortBy==='engagement'?'Posts are ordered by highest engagement score first.':'Posts are in original order.';
 
   if (instruction) {
-    const postsBlock = rows.map((r)=>`[eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n');
+    const postsBlock = rows.map((r)=>r.text).join('\n');
     return {
       system: `You are a senior Digital Marketing & Social Listening strategist specialising in Thai food & beverage brands. You analyse social media listening data and produce structured, insight-driven intelligence reports used by brand managers and marketing teams. Follow the user's custom prompt precisely. ${sortCtx}`,
       user:   `Campaign: "${camp}" | Source: ${source} | Sentiment: ${sent}\n\n${instruction}\n\n--- POSTS START ---\n${postsBlock}\n--- POSTS END ---`,
@@ -6797,10 +6793,8 @@ Rules: Ground every observation in specific post text or engagement data. No gen
   const user = `Analyse content themes and messaging in ${rows.length} posts for campaign "${camp}" from ${source} (${sent}).
 ${sortCtx}
 
-Each post: [eng:<score>] [<sentiment>] [<source>] <text>
-
 --- POSTS START ---
-${rows.map((r)=>`[eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n')}
+${rows.map((r)=>r.text).join('\n')}
 --- POSTS END ---
 
 Start directly with **Top-Performing Content Themes**.`;
