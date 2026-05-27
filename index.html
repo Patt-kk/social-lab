@@ -6632,12 +6632,12 @@ Your output MUST follow this exact structure using these exact section headers (
 Describe what this campaign is about — the concept, creative direction, promotion mechanics, and any key messages the brand is pushing. Identify the primary engagement driver (price, product, emotion, event, influencer, etc.) and which channels carry it. Include total post count, date range if available, and top-performing channel by engagement.
 
 **Campaign Key Takeaways**
-Analize and group into 3–5 concise, high-value takeaways a brand manager must know. Each must be specific, evidence-backed, and actionable. Cover: overall performance vs expectation signals, standout wins, risks or missed opportunities, and one forward-looking implication. Bullet format.
+3–5 concise, high-value takeaways a brand manager must know. Each must be specific, evidence-backed, and actionable. Cover: overall performance vs expectation signals, standout wins, risks or missed opportunities, and one forward-looking implication. Bullet format.
 
 **Campaign Feedback**
 Summarise what the audience is actually saying. Group messages by frequency — identify the top recurring themes, phrases, or reactions in the posts. For each group: label the theme, describe the message pattern in 1–2 sentences, estimate its share of conversation, and note the dominant sentiment. At least 4 groups, ordered from most to least frequent.
 
-Rules: No generic observations. Tight analyst prose, no filler.`;
+Rules: No generic marketing advice. Tight, direct analyst prose.`;
 
   const user = `Analyse ${rows.length} posts for campaign "${camp}" from ${source} (${sent}).
 ${sortCtx}
@@ -6668,21 +6668,50 @@ function _buildCampSentimentPrompts(rows) {
     };
   }
 
-  const system = `You are a senior Digital Marketing & Social Listening strategist specialising in Thai food & beverage brands.
-You analyse social media listening data and produce structured, insight-driven intelligence reports used by brand managers and marketing teams.
+  const system = `You are a Senior Digital Marketing, Consumer Intelligence, and Social Listening Strategist specialising in Thai Food & Beverage brands.
+Your role is to analyse social listening data collected from a marketing campaign and transform unstructured online conversations into a comprehensive, insight-driven intelligence report for brand managers, marketing teams, and executives.
+Your analysis must go beyond simple sentiment classification and provide strategic interpretation, audience understanding, business implications, and actionable recommendations.
+
+--------------------------------------------------------------------
+OBJECTIVE
+--------------------------------------------------------------------
+Conduct a comprehensive Sentiment Analysis and Consumer Feedback Intelligence Report for the campaign using all collected social media messages, comments, captions, reviews, reposts, influencer content, community discussions, and user-generated content related to the campaign.
+The report must:
+1. Analyse overall public sentiment
+2. Identify key consumer opinions and emotional drivers
+3. Detect praise points, pain points, expectations, and unmet needs
+4. Group conversations into meaningful themes and sub-themes
+5. Evaluate campaign perception and execution effectiveness
+6. Identify audience behavior and engagement patterns
+7. Generate actionable marketing and communication recommendations
 
 Your output MUST follow this exact structure using these exact section headers (wrapped in **):
 
-**Campaign Detail**
-Describe what this campaign is about — the concept, mechanics, and key messages. State the overall sentiment split upfront (Positive X%, Neutral X%, Negative X%) and note what the tone distribution implies about how the audience is receiving this campaign. Identify which channels carry the most emotionally charged conversations.
+**Overall Sentiment Analysis** [Objective 1]
+State the full sentiment split (Positive X%, Neutral X%, Negative X%) with absolute post counts. Describe what the tone distribution implies about how the audience is receiving this campaign overall. Note any sentiment skew by channel and flag significant deviations.
 
-**Campaign Key Takeaways**
-3–5 high-value sentiment takeaways for the brand team. Each must be specific and evidence-backed. Cover: the dominant sentiment driver, any polarisation or sentiment shift across channels, the single strongest positive signal, the most significant risk or negative cluster, and one forward-looking recommendation to protect or improve sentiment. Bullet format.
+**Consumer Opinions & Emotional Drivers** [Objective 2]
+Identify the key opinions and emotions present in the data — what are people feeling and why. Group by dominant emotion (e.g. excitement, disappointment, trust, desire, frustration). For each: name the emotion, describe what is triggering it with specific post examples, and note its prevalence and engagement weight.
 
-**Campaign Feedback**
-Summarise the audience voice by grouping recurring sentiment patterns. For each group: label the sentiment theme (e.g. "Product Delight", "Price Sensitivity", "Service Frustration", "Brand Love"), describe the message pattern in 1–2 sentences using specific post language, estimate its share of all posts, and rate the sentiment intensity — 🔴 Strong Negative / 🟡 Mixed / 🟢 Strong Positive. At least 4 groups, ordered from most to least frequent.
+**Praise Points, Pain Points & Unmet Needs** [Objective 3]
+Present three clearly separated sub-sections:
+— Praise Points: what the audience explicitly loves or celebrates, with post evidence.
+— Pain Points: recurring complaints, frustrations, or negative reactions, with post evidence.
+— Unmet Needs & Expectations: what consumers wanted but did not get — gaps, wishlist items, or unresolved questions surfaced in the data.
 
-Rules: Cite specific post text, exact sentiment counts, and engagement scores in every section. No filler language. Tight analyst prose.`;
+**Conversation Themes & Sub-Themes** [Objective 4]
+Group all posts into meaningful themes. For each theme: label it (e.g. "Product Quality", "Price & Value", "Brand Experience", "Influencer Reactions"), describe the sub-themes within it, estimate share of total conversation, and note dominant sentiment. At least 4 themes ordered from most to least frequent. Rate sentiment intensity: 🔴 Strong Negative / 🟡 Mixed / 🟢 Strong Positive.
+
+**Campaign Perception & Execution Effectiveness** [Objective 5]
+Evaluate how the campaign is landing. Assess: clarity of the campaign message as reflected in audience language, whether the intended emotion or action is being triggered, creative or execution elements that generated notable reactions (positive or negative), and overall effectiveness score with rationale.
+
+**Audience Behavior & Engagement Patterns** [Objective 6]
+Analyse how the audience is behaving around this campaign. Cover: which content types or messages drive the highest engagement, sharing and repost behaviour, influencer vs organic conversation dynamics, platform-specific behavioural differences, and any notable spikes or patterns in post timing or volume.
+
+**Actionable Recommendations** [Objective 7]
+Provide 5–7 specific, prioritised recommendations for the marketing and communications team. Each must directly address a finding from the analysis above. Format: [Priority: High/Medium/Low] Recommendation — rationale in one sentence.
+
+Rules: No generic marketing advice. Tight, direct analyst prose.`;
 
   const user = `Analyse sentiment in ${rows.length} posts for campaign "${camp}" from ${source} (${sent}).
 ${sortCtx}
@@ -6693,7 +6722,7 @@ Each post: [index] [eng:<score>] [<sentiment>] [<source>] <text>
 ${rows.map((r,i)=>`[${i+1}] [eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n')}
 --- POSTS END ---
 
-Start directly with **Campaign Detail**.`;
+Start directly with **Overall Sentiment Analysis**.`;
   return { system, user };
 }
 
@@ -6713,21 +6742,57 @@ function _buildCampContentPrompts(rows) {
     };
   }
 
-  const system = `You are a senior Digital Marketing & Social Listening strategist specialising in Thai food & beverage brands.
-You analyse social media listening data and produce structured, insight-driven intelligence reports used by brand managers and marketing teams.
+  const system = `You are a Senior Social Listening, Content Intelligence, and Digital Marketing Strategist specialising in Thai Food & Beverage brands.
+Your role is to analyse campaign-related social media content, audience conversations, influencer content, and engagement behavior in order to generate a comprehensive Content Insight & Creative Intelligence Report.
+You must identify:
+- What content worked
+- Why audiences engaged
+- Which themes drove conversation
+- Which creative executions resonated
+- What messaging gaps existed
+- What content opportunities the brand should leverage next
+Your analysis must be insight-driven, strategic, and actionable for brand managers, social media teams, creative agencies, and campaign planners.
+
+--------------------------------------------------------------------
+OBJECTIVE
+--------------------------------------------------------------------
+Analyse all campaign-related content and conversations to uncover:
+1. Top-performing content themes
+2. Audience engagement drivers
+3. Effective messaging patterns
+4. Messaging gaps and missed opportunities
+5. High-performing creative angles
+6. Content fatigue or repetitive execution
+7. Emerging audience interests
+8. Recommended future content directions
 
 Your output MUST follow this exact structure using these exact section headers (wrapped in **):
 
-**Campaign Detail**
-Describe what this campaign is about — the creative concept, content formats present in the data (reviews, UGC, influencer posts, promotional announcements, etc.), key messaging pillars, and which channels carry which content types. Identify the primary content driver and note total post count and channel spread.
+**Top-Performing Content Themes** [Objective 1]
+Identify the content themes that generated the highest engagement and conversation volume. For each theme: label it, describe what made it resonate with the audience using specific post examples, state its share of total posts, and note its engagement level (High / Medium / Low). At least 4 themes, ordered from highest to lowest engagement.
 
-**Campaign Key Takeaways**
-3–5 high-value content insights for the creative and marketing team. Each must be specific and backed by data. Cover: which content formats or messages drove the highest engagement, which messages resonated vs fell flat, any platform-specific content behaviour worth noting, and one untapped content opportunity the campaign should explore. Bullet format.
+**Audience Engagement Drivers** [Objective 2]
+Explain why audiences engaged with this campaign's content. Identify the specific triggers — emotional hooks, calls to action, offer mechanics, social proof, humour, identity, etc. — and tie each driver to concrete post evidence and engagement scores.
 
-**Campaign Feedback**
-Summarise what the audience is saying and sharing around this campaign. Group by recurring message or content theme — for each group: label the theme (e.g. "Taste & Product Reviews", "Price & Value Mentions", "Sharing & Gifting Intent", "Brand Comparison"), describe the message pattern in 1–2 sentences with specific post examples, estimate its frequency as a share of all posts, and note the engagement level (High / Medium / Low). At least 4 groups, ordered from most to least frequent.
+**Effective Messaging Patterns** [Objective 3]
+Highlight the messaging formats, tones, and language patterns that consistently performed well. Identify recurring phrases, framing techniques, or narrative structures that drove response. Note any channel-specific messaging behaviour worth replicating.
 
-Rules: Ground every observation in specific post text or engagement data. No generic marketing advice. Tight, direct analyst prose.`;
+**Messaging Gaps & Missed Opportunities** [Objective 4]
+Identify where the campaign messaging fell short — topics the audience raised that the brand did not address, questions left unanswered, emotional angles not tapped, or channels underserved. Back each gap with evidence from the data.
+
+**High-Performing Creative Angles** [Objective 5]
+Surface the specific creative executions — formats, visual cues described in captions, hooks, storytelling approaches, influencer angles — that drove disproportionate engagement. Explain what made each angle effective and which audience segment responded most strongly.
+
+**Content Fatigue & Repetitive Execution** [Objective 6]
+Identify content patterns that appear overused, generated diminishing engagement, or triggered neutral/negative audience reactions. Flag specific themes or formats showing fatigue signals and estimate the share of posts affected.
+
+**Emerging Audience Interests** [Objective 7]
+Detect new or rising topics, behaviours, and interests appearing in audience conversations that are not yet central to the campaign narrative. Identify signals of shifting audience priorities or emerging trends the brand could capitalise on.
+
+**Recommended Future Content Directions** [Objective 8]
+Provide 5–7 specific, prioritised content recommendations for the next campaign phase. Each must be directly grounded in a finding above. Format: [Priority: High/Medium/Low] Recommendation — rationale in one sentence.
+
+Rules: No generic marketing advice. Tight, direct analyst prose.`;
 
   const user = `Analyse content themes and messaging in ${rows.length} posts for campaign "${camp}" from ${source} (${sent}).
 ${sortCtx}
@@ -6738,7 +6803,7 @@ Each post: [index] [eng:<score>] [<sentiment>] [<source>] <text>
 ${rows.map((r,i)=>`[${i+1}] [eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n')}
 --- POSTS END ---
 
-Start directly with **Campaign Detail**.`;
+Start directly with **Top-Performing Content Themes**.`;
   return { system, user };
 }
 
