@@ -1990,7 +1990,7 @@ async function triggerPipeline() {
   filteredData=[...rawData]; renderCharts(); renderTable(); updateGooglePanel(); updateBrandDeepDive(); renderOverview();
   setStatus('ready', totalLabel);
   _hidePipelineOverlay();
-  showToast(`Pipeline complete — ${totalLabel}`, 'success', 4000);
+  showToast(`✅ Pipeline complete — ${totalLabel}`, 'success', 4000);
 }
 
 function parseCSV(text) {
@@ -6616,7 +6616,7 @@ function _buildCampPerformancePrompts(rows) {
   const sortCtx     = sortBy==='engagement'?'Posts are ordered by highest engagement score first.':'Posts are in original order.';
 
   if (instruction) {
-    const postsBlock = rows.map((r,i)=>`[${i+1}] [eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n');
+    const postsBlock = rows.map((r)=>`[eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n');
     return {
       system: `You are a senior Campaign Performance Analyst. Follow the user's custom prompt precisely. ${sortCtx}`,
       user:   `Campaign: "${camp}" | Source: ${source} | Sentiment: ${sent}\n\n${instruction}\n\n--- POSTS START ---\n${postsBlock}\n--- POSTS END ---`,
@@ -6637,15 +6637,15 @@ Describe what this campaign is about — the concept, creative direction, promot
 **Campaign Feedback**
 Summarise what the audience is actually saying. Group messages by frequency — identify the top recurring themes, phrases, or reactions in the posts. For each group: label the theme, describe the message pattern in 1–2 sentences, estimate its share of conversation, and note the dominant sentiment. At least 4 groups, ordered from most to least frequent.
 
-Rules: No generic marketing advice. Tight, direct analyst prose.`;
+Rules: Every sentence must cite specific counts, engagement scores, or verbatim post language. No generic observations. Tight analyst prose, no filler.`;
 
   const user = `Analyse ${rows.length} posts for campaign "${camp}" from ${source} (${sent}).
 ${sortCtx}
 
-Each post: [index] [eng:<score>] [<sentiment>] [<source>] <text>
+Each post: [eng:<score>] [<sentiment>] [<source>] <text>
 
 --- POSTS START ---
-${rows.map((r,i)=>`[${i+1}] [eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n')}
+${rows.map((r)=>`[eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n')}
 --- POSTS END ---
 
 Start directly with **Campaign Detail**.`;
@@ -6661,7 +6661,7 @@ function _buildCampSentimentPrompts(rows) {
   const sortCtx     = sortBy==='engagement'?'Posts are ordered by highest engagement score first.':'Posts are in original order.';
 
   if (instruction) {
-    const postsBlock = rows.map((r,i)=>`[${i+1}] [eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n');
+    const postsBlock = rows.map((r)=>`[eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n');
     return {
       system: `You are a senior Digital Marketing & Social Listening strategist specialising in Thai food & beverage brands. You analyse social media listening data and produce structured, insight-driven intelligence reports used by brand managers and marketing teams. Follow the user's custom prompt precisely. ${sortCtx}`,
       user:   `Campaign: "${camp}" | Source: ${source} | Sentiment: ${sent}\n\n${instruction}\n\n--- POSTS START ---\n${postsBlock}\n--- POSTS END ---`,
@@ -6711,15 +6711,15 @@ Analyse how the audience is behaving around this campaign. Cover: which content 
 **Actionable Recommendations** [Objective 7]
 Provide 5–7 specific, prioritised recommendations for the marketing and communications team. Each must directly address a finding from the analysis above. Format: [Priority: High/Medium/Low] Recommendation — rationale in one sentence.
 
-Rules: No generic marketing advice. Tight, direct analyst prose.`;
+Rules: Cite specific post text, exact sentiment counts, and engagement scores in every section. No filler language. Tight analyst prose.`;
 
   const user = `Analyse sentiment in ${rows.length} posts for campaign "${camp}" from ${source} (${sent}).
 ${sortCtx}
 
-Each post: [index] [eng:<score>] [<sentiment>] [<source>] <text>
+Each post: [eng:<score>] [<sentiment>] [<source>] <text>
 
 --- POSTS START ---
-${rows.map((r,i)=>`[${i+1}] [eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n')}
+${rows.map((r)=>`[eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n')}
 --- POSTS END ---
 
 Start directly with **Overall Sentiment Analysis**.`;
@@ -6735,7 +6735,7 @@ function _buildCampContentPrompts(rows) {
   const sortCtx     = sortBy==='engagement'?'Posts are ordered by highest engagement score first.':'Posts are in original order.';
 
   if (instruction) {
-    const postsBlock = rows.map((r,i)=>`[${i+1}] [eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n');
+    const postsBlock = rows.map((r)=>`[eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n');
     return {
       system: `You are a senior Digital Marketing & Social Listening strategist specialising in Thai food & beverage brands. You analyse social media listening data and produce structured, insight-driven intelligence reports used by brand managers and marketing teams. Follow the user's custom prompt precisely. ${sortCtx}`,
       user:   `Campaign: "${camp}" | Source: ${source} | Sentiment: ${sent}\n\n${instruction}\n\n--- POSTS START ---\n${postsBlock}\n--- POSTS END ---`,
@@ -6792,15 +6792,15 @@ Detect new or rising topics, behaviours, and interests appearing in audience con
 **Recommended Future Content Directions** [Objective 8]
 Provide 5–7 specific, prioritised content recommendations for the next campaign phase. Each must be directly grounded in a finding above. Format: [Priority: High/Medium/Low] Recommendation — rationale in one sentence.
 
-Rules: No generic marketing advice. Tight, direct analyst prose.`;
+Rules: Ground every observation in specific post text or engagement data. No generic marketing advice. Tight, direct analyst prose.`;
 
   const user = `Analyse content themes and messaging in ${rows.length} posts for campaign "${camp}" from ${source} (${sent}).
 ${sortCtx}
 
-Each post: [index] [eng:<score>] [<sentiment>] [<source>] <text>
+Each post: [eng:<score>] [<sentiment>] [<source>] <text>
 
 --- POSTS START ---
-${rows.map((r,i)=>`[${i+1}] [eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n')}
+${rows.map((r)=>`[eng:${r.engagement}] [${r.sentiment}] [${r.source}] ${r.text}`).join('\n')}
 --- POSTS END ---
 
 Start directly with **Top-Performing Content Themes**.`;
