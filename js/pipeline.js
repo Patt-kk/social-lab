@@ -186,7 +186,7 @@ async function triggerPipeline() {
   filteredData=[...rawData]; renderCharts(); renderTable(); updateGooglePanel(); updateBrandDeepDive(); renderOverview();
   setStatus('ready', totalLabel);
   _hidePipelineOverlay();
-  showToast(`Pipeline complete — ${totalLabel}`, 'success', 4000);
+  showToast(`✅ Pipeline complete — ${totalLabel}`, 'success', 4000);
 }
 
 function parseCSV(text) {

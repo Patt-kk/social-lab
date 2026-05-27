@@ -833,3 +833,4 @@ initPyodide().catch(err=>{
   const str = `${days[d.getDay()]}, ${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]} ${d.getFullYear()}`;
   document.getElementById('sidebarDate').textContent = str;
 })();
+
