@@ -171,8 +171,9 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 .sent-leg-dot{width:10px;height:10px;border-radius:3px;flex-shrink:0}
 .stk-row{display:flex;align-items:center;gap:10px;margin-bottom:10px}
 .stk-lbl{font-size:12px;font-weight:600;color:var(--text2);width:92px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-.stk-track{flex:1;height:16px;display:flex;border-radius:5px;overflow:hidden;background:var(--bg);border:1px solid var(--border)}
-.stk-seg{height:100%;transition:width .6s cubic-bezier(.16,1,.3,1)}
+.stk-track{flex:1;height:26px;display:flex;border-radius:5px;overflow:hidden;background:var(--bg);border:1px solid var(--border)}
+.stk-seg{height:100%;transition:width .6s cubic-bezier(.16,1,.3,1);display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap}
+.stk-seg-lbl{font-family:"DM Mono",monospace;font-size:10px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.3);pointer-events:none;line-height:1}
 .stk-total{font-family:"DM Mono",monospace;font-size:11px;color:var(--text3);width:54px;text-align:right;flex-shrink:0}
 .ts-brand-pill{font-size:11px;font-weight:500;padding:4px 12px;border-radius:20px;border:1px solid var(--border2);cursor:pointer;transition:all .15s;user-select:none;color:var(--text2);background:var(--surface)}
 .ts-brand-pill:hover{border-color:var(--accent);color:var(--accent)}
@@ -215,7 +216,10 @@ table.dt tbody td{padding:9px 14px;font-size:12px;color:var(--text2);max-width:2
 .gr-subtab{background:transparent;border:none;padding:9px 16px;font-family:"DM Sans",sans-serif;font-size:13px;font-weight:500;color:var(--text3);cursor:pointer;transition:all .15s;border-bottom:2.5px solid transparent;margin-bottom:-1px}
 .gr-subtab:hover{color:var(--text)}
 .gr-subtab.active{color:var(--accent);border-bottom-color:var(--accent);font-weight:600}
-.gr-subnav-meta{margin-left:auto;font-size:12px;color:var(--text3);font-weight:500;font-family:"DM Mono",monospace;padding-right:2px}
+.gr-subnav-meta{margin-left:auto;display:flex;align-items:center;gap:10px;font-size:12px;color:var(--text3);font-weight:500;font-family:"DM Mono",monospace;padding-right:2px}
+.analyse-ai-btn{display:inline-flex;align-items:center;gap:6px;padding:5px 13px;border-radius:20px;border:1.5px solid rgba(37,99,235,.35);background:var(--accent-lt);color:var(--accent);font-size:12px;font-weight:700;font-family:"DM Sans",sans-serif;cursor:pointer;transition:all .18s;white-space:nowrap;letter-spacing:-.1px}
+.analyse-ai-btn:hover{background:var(--accent);color:#fff;border-color:var(--accent);box-shadow:0 2px 10px rgba(37,99,235,.25);transform:translateY(-1px)}
+.analyse-ai-btn .ab-icon{font-size:13px}
 .gr-subpanel{display:none}
 .gr-subpanel.active{display:block}
 
@@ -270,7 +274,7 @@ table.dt tbody td{padding:9px 14px;font-size:12px;color:var(--text2);max-width:2
 
 /* Category stack */
 .gr-cat-row{display:flex;align-items:center;gap:10px;margin-bottom:8px}
-.gr-cat-lbl{font-size:12px;font-weight:600;color:var(--text2);width:110px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-transform:capitalize}
+.gr-cat-lbl{font-size:15px;font-weight:700;color:var(--text);width:145px;flex-shrink:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;text-transform:capitalize}
 .gr-cat-track{flex:1;height:34px;display:flex;border-radius:6px;overflow:hidden;background:var(--bg);border:1px solid var(--border);position:relative}
 .gr-cat-seg{height:100%;transition:width .7s cubic-bezier(.16,1,.3,1);display:flex;align-items:center;justify-content:center;font-family:"DM Mono",monospace;overflow:hidden;white-space:nowrap;cursor:default}
 .gr-cat-seg-count{font-size:12px;font-weight:800;color:#fff;line-height:1;text-shadow:0 1px 2px rgba(0,0,0,.25)}
@@ -630,6 +634,7 @@ table.dt tbody td{padding:9px 14px;font-size:12px;color:var(--text2);max-width:2
 /* ── KEYBOARD NAV FOCUS RING ── */
 :focus-visible{outline:2px solid var(--accent);outline-offset:2px;border-radius:4px}
 button:focus:not(:focus-visible){outline:none}
+textarea:focus{border-color:var(--accent)!important}
 
 /* ── SMOOTH TRANSITIONS ── */
 .panel{transition:none}
@@ -753,7 +758,7 @@ button:focus:not(:focus-visible){outline:none}
     <div class="kb-row"><span class="kb-desc">Toggle dark / light mode</span><div class="kb-keys"><kbd class="kbd">Alt</kbd><span style="font-size:10px;color:var(--text3)">+</span><kbd class="kbd">D</kbd></div></div>
     <div class="kb-row"><span class="kb-desc">Show this cheat sheet</span><div class="kb-keys"><kbd class="kbd">?</kbd></div></div>
     <div class="kb-row"><span class="kb-desc">Close overlay / modal</span><div class="kb-keys"><kbd class="kbd">Esc</kbd></div></div>
-    <button class="kb-close" onclick="document.getElementById('kbOverlay').classList.remove('show')">Close</button>
+    <button class="kb-close" id="kbCloseBtn">Close</button>
   </div>
 </div>
 
@@ -891,7 +896,7 @@ button:focus:not(:focus-visible){outline:none}
           <div class="card">
             <div class="section-bar" style="display:flex;align-items:center;justify-content:space-between;">
               <span>Topic × Brand × Sentiment + Engagement &amp; Mentions</span>
-              <button class="copy-table-btn" id="copyBtn1" onclick="copyTableToClipboard('topicTableBody','copyBtn1')">⎘ Copy</button>
+              <button class="copy-table-btn" id="copyBtn1">⎘ Copy</button>
             </div>
             <div class="report-table-wrap">
               <table class="report-table">
@@ -907,7 +912,7 @@ button:focus:not(:focus-visible){outline:none}
           <div class="card">
             <div class="section-bar" style="display:flex;align-items:center;justify-content:space-between;">
               <span>Sentiment by Brand — Unique Mentions</span>
-              <button class="copy-table-btn" id="copyBtn2" onclick="copyTableToClipboard('sentTableBody','copyBtn2')">⎘ Copy</button>
+              <button class="copy-table-btn" id="copyBtn2">⎘ Copy</button>
             </div>
             <div class="report-table-wrap">
               <table class="report-table">
@@ -940,11 +945,21 @@ button:focus:not(:focus-visible){outline:none}
             <button class="gr-subtab active" data-gr-tab="dashboard">📊 Dashboard</button>
             <button class="gr-subtab" data-gr-tab="ai">✦ AI Analysis</button>
             <button class="gr-subtab" data-gr-tab="raw">🗂 Raw Data</button>
-            <div class="gr-subnav-meta" id="grSubnavMeta"></div>
+            <div class="gr-subnav-meta" id="grSubnavMeta"><span id="grSubnavMetaText"></span><button class="analyse-ai-btn" id="grAnalyseBtn" style="display:none"><span class="ab-icon">✦</span> Analyse with AI <span>→</span></button></div>
           </div>
 
           <!-- ═════ DASHBOARD ═════ -->
           <div class="gr-subpanel active" id="gr-panel-dashboard">
+
+            <!-- Brand selector — same white card style as Campaign / BDD -->
+            <div style="margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">
+                Select Brand
+                <span id="grActiveBrandLabel" style="font-weight:600;color:var(--accent);letter-spacing:0;text-transform:none;margin-left:6px"></span>
+              </div>
+              <div id="grDashBrandPills" style="display:flex;gap:7px;flex-wrap:wrap;padding-bottom:4px;scrollbar-width:thin"></div>
+            </div>
+
             <!-- KPI Row -->
             <div class="gr-kpi-row">
               <div class="gr-kpi-card">
@@ -1067,30 +1082,31 @@ button:focus:not(:focus-visible){outline:none}
           <div class="gr-subpanel" id="gr-panel-ai">
             <div class="card" id="grAiCard" style="margin-top:4px;padding:0">
 
-              <!-- ── AI Card hero header ── -->
-              <div style="background:linear-gradient(135deg,#3b82f6 0%,#60a5fa 60%,#93c5fd 100%);padding:20px 24px 0;position:relative;overflow:hidden">
-                <!-- subtle grid pattern -->
+              <!-- Hero header — title + model selector only, no pills -->
+              <div style="background:linear-gradient(135deg,#3b82f6 0%,#60a5fa 60%,#93c5fd 100%);padding:20px 24px;position:relative;overflow:hidden">
                 <div style="position:absolute;inset:0;opacity:.12;background-image:repeating-linear-gradient(0deg,transparent,transparent 24px,#fff 24px,#fff 25px),repeating-linear-gradient(90deg,transparent,transparent 24px,#fff 24px,#fff 25px);pointer-events:none"></div>
-                <!-- title row -->
-                <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;position:relative;flex-wrap:wrap;margin-bottom:16px">
+                <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;flex-wrap:wrap">
                   <div style="display:flex;align-items:center;gap:10px">
                     <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">⭐</div>
                     <div>
                       <div style="font-family:'Bricolage Grotesque',sans-serif;font-size:17px;font-weight:800;color:#fff;line-height:1;letter-spacing:-.3px;text-shadow:0 1px 3px rgba(0,0,0,.15)">Google Review AI Analysis</div>
-                      <div style="font-size:11px;color:rgba(255,255,255,.85);margin-top:3px;font-weight:500">Select a brand below — scoped to Google Reviews source only</div>
+                      <div style="font-size:11px;color:rgba(255,255,255,.85);margin-top:3px;font-weight:500">Select a brand below — results are scoped to Google Reviews only</div>
                     </div>
                   </div>
-                  <!-- model selector -->
                   <div style="flex-shrink:0;position:relative">
                     <select id="grAiModel" style="height:32px;font-size:12px;font-family:'DM Sans',sans-serif;font-weight:600;background:#fff;color:var(--accent);border:none;border-radius:8px;padding:0 30px 0 12px;cursor:pointer;outline:none;appearance:none;-webkit-appearance:none;box-shadow:0 2px 8px rgba(0,0,0,.12);min-width:180px"></select>
                     <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:10px;color:var(--accent)">▼</span>
                   </div>
                 </div>
-                <!-- brand pill selector -->
-                <div style="position:relative;margin-bottom:-1px">
-                  <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:8px">Analysing Brand</div>
-                  <div id="grAiBrandPills" style="display:flex;flex-wrap:wrap;gap:6px;padding-bottom:18px"></div>
+              </div>
+
+              <!-- Brand selector — white card style matching Dashboard -->
+              <div style="padding:14px 20px 16px;border-bottom:1px solid var(--border);background:var(--surface)">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">
+                  Select Brand
+                  <span id="grAiActiveLabel" style="font-weight:600;color:var(--accent);letter-spacing:0;text-transform:none;margin-left:6px"></span>
                 </div>
+                <div id="grAiBrandPills" style="display:flex;flex-wrap:wrap;gap:7px;padding-bottom:4px;scrollbar-width:thin"></div>
               </div>
 
               <!-- card body -->
@@ -1101,18 +1117,18 @@ button:focus:not(:focus-visible){outline:none}
                 <div>
                   <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px">Sentiment</div>
                   <div class="ms-wrap" id="grAiMsWrapSent">
-                    <div class="ms-trigger" id="grAiMsTriggerSent" onclick="grAiMsToggle('Sent')">
+                    <div class="ms-trigger" id="grAiMsTriggerSent">
                       <span class="ms-trigger-label placeholder" id="grAiMsLabelSent">All sentiments</span>
                       <span class="ms-arrow">▼</span>
                     </div>
                     <div class="ms-dropdown" id="grAiMsDropSent">
-                      <div class="ms-option ms-all selected" data-value="__all__" onclick="grAiMsToggleAll('Sent',this)">
+                      <div class="ms-option ms-all selected" data-value="__all__">
                         <input type="checkbox" checked> All sentiments
                       </div>
                       <div class="ms-divider"></div>
-                      <div class="ms-option" data-value="positive" onclick="grAiMsToggleOption('Sent',this)"><input type="checkbox"> Positive</div>
-                      <div class="ms-option" data-value="neutral"  onclick="grAiMsToggleOption('Sent',this)"><input type="checkbox"> Neutral</div>
-                      <div class="ms-option" data-value="negative" onclick="grAiMsToggleOption('Sent',this)"><input type="checkbox"> Negative</div>
+                      <div class="ms-option" data-value="positive"><input type="checkbox"> Positive</div>
+                      <div class="ms-option" data-value="neutral"><input type="checkbox"> Neutral</div>
+                      <div class="ms-option" data-value="negative"><input type="checkbox"> Negative</div>
                     </div>
                   </div>
                 </div>
@@ -1132,16 +1148,17 @@ button:focus:not(:focus-visible){outline:none}
                     <option value="none">Original order</option>
                   </select>
                 </div>
-                <div style="display:flex;align-items:flex-end">
+                <div>
+                  <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px">Note</div>
                   <div style="font-size:10px;font-weight:600;color:#d97706;background:#fff8ed;border:1px solid #fde68a;border-radius:5px;padding:4px 9px;line-height:1.4">🔒 Source locked to<br>Google Reviews</div>
                 </div>
               </div>
               <div style="margin-bottom:12px">
                 <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:6px">
-                  <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase">Prompt Here If You Want <span style="font-weight:500;color:var(--text3);text-transform:none;letter-spacing:0">(Optional)</span></div>
-                  <span style="font-size:10px;color:var(--text3);font-style:italic">Write your own prompt — or leave blank to use the default analysis</span>
+                  <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase">Custom Prompt <span style="font-weight:500;color:var(--text3);text-transform:none;letter-spacing:0">(Optional)</span></div>
+                  <span style="font-size:10px;color:var(--text3);font-style:italic">Leave blank to use the default analysis</span>
                 </div>
-                <textarea id="grAiInstruction" rows="4" style="width:100%;background:var(--bg);border:1.5px solid var(--border2);border-radius:8px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical;line-height:1.6;transition:border-color .15s" placeholder="e.g. Summarise the top complaints about staff service across all branches, highlight any recurring issues by location, and suggest 3 actionable improvements." onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'"></textarea>
+                <textarea id="grAiInstruction" rows="4" style="width:100%;background:var(--bg);border:1.5px solid var(--border2);border-radius:8px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical;line-height:1.6;transition:border-color .15s" placeholder="e.g. Summarise the top complaints about staff service across all branches, highlight any recurring issues by location, and suggest 3 actionable improvements."></textarea>
               </div>
               <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
                 <button class="ai-run-btn" id="grAiRunBtn">
@@ -1154,7 +1171,7 @@ button:focus:not(:focus-visible){outline:none}
               <div class="ai-output-card" id="grAiOutputCard" style="display:none;margin-top:16px">
                 <div class="ai-output-header">
                   <div style="display:flex;align-items:center;gap:10px">
-                    <span style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase">Google Review Analysis</span>
+                    <span style="font-size:11px;font-weight:700;color:var(--text3);letter-spacing:1px;text-transform:uppercase" id="grAiOutputLabel">Google Review Analysis</span>
                     <span id="grAiOutputMeta" style="font-size:12px;color:var(--accent);font-weight:500"></span>
                   </div>
                   <button class="clear-btn" id="grAiCopyBtn">Copy</button>
@@ -1215,7 +1232,7 @@ button:focus:not(:focus-visible){outline:none}
           <div class="gr-subnav" id="campSubnav">
             <button class="gr-subtab active" data-camp-tab="dashboard">📊 Dashboard</button>
             <button class="gr-subtab" data-camp-tab="ai">✦ AI Analysis</button>
-            <div class="gr-subnav-meta" id="campSubnavMeta"></div>
+            <div class="gr-subnav-meta" id="campSubnavMeta"><span id="campSubnavMetaText"></span><button class="analyse-ai-btn" id="campAnalyseBtn" style="display:none"><span class="ab-icon">✦</span> Analyse with AI <span>→</span></button></div>
           </div>
 
           <!-- ══════ DASHBOARD SUBPANEL ══════ -->
@@ -1351,21 +1368,21 @@ button:focus:not(:focus-visible){outline:none}
                 <div style="margin-bottom:16px">
                   <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">Analysis Type</div>
                   <div class="ai-type-toggle" style="grid-template-columns:repeat(3,1fr)">
-                    <button class="ai-type-btn active" id="campAiTypePerformance" onclick="setCampAiType('performance')">
+                    <button class="ai-type-btn active" id="campAiTypePerformance">
                       <span class="at-icon">📊</span>
                       <span class="at-text">
                         <span class="at-label">Campaign Performance</span>
                         <span class="at-desc">Engagement, reach, sentiment drivers & ROI signals</span>
                       </span>
                     </button>
-                    <button class="ai-type-btn" id="campAiTypeSentiment" onclick="setCampAiType('sentiment')">
+                    <button class="ai-type-btn" id="campAiTypeSentiment">
                       <span class="at-icon">🎭</span>
                       <span class="at-text">
                         <span class="at-label">Sentiment Analysis</span>
                         <span class="at-desc">Sentiment breakdown & key positive / negative drivers</span>
                       </span>
                     </button>
-                    <button class="ai-type-btn" id="campAiTypeContent" onclick="setCampAiType('content')">
+                    <button class="ai-type-btn" id="campAiTypeContent">
                       <span class="at-icon">✍️</span>
                       <span class="at-text">
                         <span class="at-label">Content Insights</span>
@@ -1380,12 +1397,12 @@ button:focus:not(:focus-visible){outline:none}
                   <div>
                     <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px">Source</div>
                     <div class="ms-wrap" id="campAiMsWrapSource">
-                      <div class="ms-trigger" id="campAiMsTriggerSource" onclick="campAiMsToggle('Source')">
+                      <div class="ms-trigger" id="campAiMsTriggerSource">
                         <span class="ms-trigger-label placeholder" id="campAiMsLabelSource">All channels</span>
                         <span class="ms-arrow">▼</span>
                       </div>
                       <div class="ms-dropdown" id="campAiMsDropSource">
-                        <div class="ms-option ms-all selected" data-value="__all__" onclick="campAiMsToggleAll('Source',this)">
+                        <div class="ms-option ms-all selected" data-value="__all__">
                           <input type="checkbox" checked> All channels
                         </div>
                         <div class="ms-divider"></div>
@@ -1396,18 +1413,18 @@ button:focus:not(:focus-visible){outline:none}
                   <div>
                     <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px">Sentiment</div>
                     <div class="ms-wrap" id="campAiMsWrapSent">
-                      <div class="ms-trigger" id="campAiMsTriggerSent" onclick="campAiMsToggle('Sent')">
+                      <div class="ms-trigger" id="campAiMsTriggerSent">
                         <span class="ms-trigger-label placeholder" id="campAiMsLabelSent">All sentiments</span>
                         <span class="ms-arrow">▼</span>
                       </div>
                       <div class="ms-dropdown" id="campAiMsDropSent">
-                        <div class="ms-option ms-all selected" data-value="__all__" onclick="campAiMsToggleAll('Sent',this)">
+                        <div class="ms-option ms-all selected" data-value="__all__">
                           <input type="checkbox" checked> All sentiments
                         </div>
                         <div class="ms-divider"></div>
-                        <div class="ms-option" data-value="positive" onclick="campAiMsToggleOption('Sent',this)"><input type="checkbox"> Positive</div>
-                        <div class="ms-option" data-value="neutral"  onclick="campAiMsToggleOption('Sent',this)"><input type="checkbox"> Neutral</div>
-                        <div class="ms-option" data-value="negative" onclick="campAiMsToggleOption('Sent',this)"><input type="checkbox"> Negative</div>
+                        <div class="ms-option" data-value="positive"><input type="checkbox"> Positive</div>
+                        <div class="ms-option" data-value="neutral"><input type="checkbox"> Neutral</div>
+                        <div class="ms-option" data-value="negative"><input type="checkbox"> Negative</div>
                       </div>
                     </div>
                   </div>
@@ -1435,7 +1452,7 @@ button:focus:not(:focus-visible){outline:none}
                     <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase">Custom Prompt <span style="font-weight:500;color:var(--text3);text-transform:none;letter-spacing:0">(Optional)</span></div>
                     <span style="font-size:10px;color:var(--text3);font-style:italic">Leave blank to use the default analysis</span>
                   </div>
-                  <textarea id="campAiInstruction" rows="4" style="width:100%;background:var(--bg);border:1.5px solid var(--border2);border-radius:8px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical;line-height:1.6;transition:border-color .15s" placeholder="e.g. Analyse engagement trends for this campaign across all channels, identify top performing post types, and recommend 3 optimisation tactics." onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'"></textarea>
+                  <textarea id="campAiInstruction" rows="4" style="width:100%;background:var(--bg);border:1.5px solid var(--border2);border-radius:8px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical;line-height:1.6;transition:border-color .15s" placeholder="e.g. Analyse engagement trends for this campaign across all channels, identify top performing post types, and recommend 3 optimisation tactics."></textarea>
                 </div>
 
                 <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
@@ -1586,7 +1603,7 @@ button:focus:not(:focus-visible){outline:none}
                 <div class="card-title" style="margin-bottom:0">Engagement</div>
                 <div style="font-size:11px;color:var(--text3);margin-top:1px">Total engagement score by brand and channel</div>
               </div>
-              <button class="copy-table-btn" id="ovCopyEng" onclick="copyOvTable('ovTableEng','ovCopyEng')">⎘ Copy</button>
+              <button class="copy-table-btn" id="ovCopyEng">⎘ Copy</button>
             </div>
             <div class="ov-table-wrap">
               <table class="ov-table" id="ovTableEng"></table>
@@ -1600,7 +1617,7 @@ button:focus:not(:focus-visible){outline:none}
                 <div class="card-title" style="margin-bottom:0">Mention</div>
                 <div style="font-size:11px;color:var(--text3);margin-top:1px">Unique mention count by brand and channel</div>
               </div>
-              <button class="copy-table-btn" id="ovCopyMen" onclick="copyOvTable('ovTableMen','ovCopyMen')">⎘ Copy</button>
+              <button class="copy-table-btn" id="ovCopyMen">⎘ Copy</button>
             </div>
             <div class="ov-table-wrap">
               <table class="ov-table" id="ovTableMen"></table>
@@ -1614,7 +1631,7 @@ button:focus:not(:focus-visible){outline:none}
                 <div class="card-title" style="margin-bottom:0">View</div>
                 <div style="font-size:11px;color:var(--text3);margin-top:1px">Page View (X · Blockdit · Website + others) and Video View (TikTok · YouTube · Facebook · Instagram) by brand and channel</div>
               </div>
-              <button class="copy-table-btn" id="ovCopyView" onclick="copyOvTable('ovTableView','ovCopyView')">⎘ Copy</button>
+              <button class="copy-table-btn" id="ovCopyView">⎘ Copy</button>
             </div>
             <div class="ov-table-wrap">
               <table class="ov-table" id="ovTableView"></table>
@@ -1644,7 +1661,7 @@ button:focus:not(:focus-visible){outline:none}
           <div class="gr-subnav" id="bddSubnav">
             <button class="gr-subtab active" data-bdd-tab="dashboard">📊 Dashboard</button>
             <button class="gr-subtab" data-bdd-tab="ai">✦ AI Analysis</button>
-            <div class="gr-subnav-meta" id="bddSubnavMeta"></div>
+            <div class="gr-subnav-meta" id="bddSubnavMeta"><span id="bddSubnavMetaText"></span><button class="analyse-ai-btn" id="bddAnalyseBtn" style="display:none"><span class="ab-icon">✦</span> Analyse with AI <span>→</span></button></div>
           </div>
 
           <!-- ══════════════ DASHBOARD SUB-PANEL ══════════════ -->
@@ -1764,12 +1781,11 @@ button:focus:not(:focus-visible){outline:none}
           <!-- ─── AI ANALYSIS (Brand-scoped) ─── -->
           <div class="card" id="bddAiCard" style="margin-top:4px;padding:0">
 
-            <!-- ── AI Card hero header ── -->
-            <div style="background:linear-gradient(135deg,#3b82f6 0%,#60a5fa 60%,#93c5fd 100%);padding:20px 24px 0;position:relative;overflow:hidden">
+            <!-- Hero header — title + model selector only, no pills -->
+            <div style="background:linear-gradient(135deg,#3b82f6 0%,#60a5fa 60%,#93c5fd 100%);padding:20px 24px;position:relative;overflow:hidden">
               <!-- subtle grid pattern -->
               <div style="position:absolute;inset:0;opacity:.12;background-image:repeating-linear-gradient(0deg,transparent,transparent 24px,#fff 24px,#fff 25px),repeating-linear-gradient(90deg,transparent,transparent 24px,#fff 24px,#fff 25px);pointer-events:none"></div>
-              <!-- title row -->
-              <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:12px;position:relative;flex-wrap:wrap;margin-bottom:16px">
+              <div style="display:flex;align-items:center;justify-content:space-between;gap:12px;position:relative;flex-wrap:wrap">
                 <div style="display:flex;align-items:center;gap:10px">
                   <div style="width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.25);border:1px solid rgba(255,255,255,.35);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0">✦</div>
                   <div>
@@ -1783,11 +1799,15 @@ button:focus:not(:focus-visible){outline:none}
                   <span style="position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:10px;color:var(--accent)">▼</span>
                 </div>
               </div>
-              <!-- brand pill selector -->
-              <div style="position:relative;margin-bottom:-1px">
-                <div style="font-size:10px;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:rgba(255,255,255,.7);margin-bottom:8px">Analysing Brand</div>
-                <div id="bddAiBrandPills" style="display:flex;flex-wrap:wrap;gap:6px;padding-bottom:18px"></div>
+            </div>
+
+            <!-- Brand selector — same white card style as Dashboard -->
+            <div style="padding:14px 20px 16px;border-bottom:1px solid var(--border);background:var(--surface)">
+              <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">
+                Select Brand
+                <span id="bddAiActiveLabel" style="font-weight:600;color:var(--accent);letter-spacing:0;text-transform:none;margin-left:6px"></span>
               </div>
+              <div id="bddAiBrandPills" style="display:flex;flex-wrap:wrap;gap:7px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin"></div>
             </div>
 
             <!-- card body -->
@@ -1797,21 +1817,21 @@ button:focus:not(:focus-visible){outline:none}
             <div style="margin-bottom:16px">
               <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:8px">Analysis Type</div>
               <div class="ai-type-toggle" style="grid-template-columns:repeat(3,1fr)">
-                <button class="ai-type-btn active" id="bddAiTypeSocial" onclick="setBddAiType('social')">
+                <button class="ai-type-btn active" id="bddAiTypeSocial">
                   <span class="at-icon">📡</span>
                   <span class="at-text">
                     <span class="at-label">Social Listening</span>
                     <span class="at-desc">Themes, channels & strategic recommendations</span>
                   </span>
                 </button>
-                <button class="ai-type-btn" id="bddAiTypeBrand" onclick="setBddAiType('brand')">
+                <button class="ai-type-btn" id="bddAiTypeBrand">
                   <span class="at-icon">🏷</span>
                   <span class="at-text">
                     <span class="at-label">Brand Analysis</span>
                     <span class="at-desc">Brand health, strengths, risks & strategic actions</span>
                   </span>
                 </button>
-                <button class="ai-type-btn" id="bddAiTypeSentiment" onclick="setBddAiType('sentiment')">
+                <button class="ai-type-btn" id="bddAiTypeSentiment">
                   <span class="at-icon">🎭</span>
                   <span class="at-text">
                     <span class="at-label">Sentiment Analysis</span>
@@ -1826,12 +1846,12 @@ button:focus:not(:focus-visible){outline:none}
               <div>
                 <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px">Source</div>
                 <div class="ms-wrap" id="bddAiMsWrapSource">
-                  <div class="ms-trigger" id="bddAiMsTriggerSource" onclick="bddAiMsToggle('Source')">
+                  <div class="ms-trigger" id="bddAiMsTriggerSource">
                     <span class="ms-trigger-label placeholder" id="bddAiMsLabelSource">All channels</span>
                     <span class="ms-arrow">▼</span>
                   </div>
                   <div class="ms-dropdown" id="bddAiMsDropSource">
-                    <div class="ms-option ms-all selected" data-value="__all__" onclick="bddAiMsToggleAll('Source',this)">
+                    <div class="ms-option ms-all selected" data-value="__all__">
                       <input type="checkbox" checked> All channels
                     </div>
                     <div class="ms-divider"></div>
@@ -1843,18 +1863,18 @@ button:focus:not(:focus-visible){outline:none}
               <div>
                 <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px">Sentiment</div>
                 <div class="ms-wrap" id="bddAiMsWrapSent">
-                  <div class="ms-trigger" id="bddAiMsTriggerSent" onclick="bddAiMsToggle('Sent')">
+                  <div class="ms-trigger" id="bddAiMsTriggerSent">
                     <span class="ms-trigger-label placeholder" id="bddAiMsLabelSent">All sentiments</span>
                     <span class="ms-arrow">▼</span>
                   </div>
                   <div class="ms-dropdown" id="bddAiMsDropSent">
-                    <div class="ms-option ms-all selected" data-value="__all__" onclick="bddAiMsToggleAll('Sent',this)">
+                    <div class="ms-option ms-all selected" data-value="__all__">
                       <input type="checkbox" checked> All sentiments
                     </div>
                     <div class="ms-divider"></div>
-                    <div class="ms-option" data-value="positive" onclick="bddAiMsToggleOption('Sent',this)"><input type="checkbox"> Positive</div>
-                    <div class="ms-option" data-value="neutral"  onclick="bddAiMsToggleOption('Sent',this)"><input type="checkbox"> Neutral</div>
-                    <div class="ms-option" data-value="negative" onclick="bddAiMsToggleOption('Sent',this)"><input type="checkbox"> Negative</div>
+                    <div class="ms-option" data-value="positive"><input type="checkbox"> Positive</div>
+                    <div class="ms-option" data-value="neutral"><input type="checkbox"> Neutral</div>
+                    <div class="ms-option" data-value="negative"><input type="checkbox"> Negative</div>
                   </div>
                 </div>
               </div>
@@ -1877,10 +1897,10 @@ button:focus:not(:focus-visible){outline:none}
             </div>
             <div style="margin-bottom:12px">
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:6px">
-                <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase">Prompt Here If You Want <span style="font-weight:500;color:var(--text3);text-transform:none;letter-spacing:0">(Optional)</span></div>
-                <span style="font-size:10px;color:var(--text3);font-style:italic">Write your own prompt — or leave blank to use the default analysis</span>
+                <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase">Custom Prompt <span style="font-weight:500;color:var(--text3);text-transform:none;letter-spacing:0">(Optional)</span></div>
+                <span style="font-size:10px;color:var(--text3);font-style:italic">Leave blank to use the default analysis</span>
               </div>
-              <textarea id="bddAiInstruction" rows="4" style="width:100%;background:var(--bg);border:1.5px solid var(--border2);border-radius:8px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical;line-height:1.6;transition:border-color .15s" placeholder="e.g. Analyse the sentiment trend for this brand across all channels, identify the top 3 positive drivers and top 3 risk areas, then suggest strategic actions for next month." onfocus="this.style.borderColor='var(--accent)'" onblur="this.style.borderColor='var(--border2)'"></textarea>
+              <textarea id="bddAiInstruction" rows="4" style="width:100%;background:var(--bg);border:1.5px solid var(--border2);border-radius:8px;padding:10px 12px;font-family:'DM Sans',sans-serif;font-size:13px;color:var(--text);outline:none;resize:vertical;line-height:1.6;transition:border-color .15s" placeholder="e.g. Analyse the sentiment trend for this brand across all channels, identify the top 3 positive drivers and top 3 risk areas, then suggest strategic actions for next month."></textarea>
             </div>
             <div style="display:flex;align-items:center;gap:14px;flex-wrap:wrap">
               <button class="ai-run-btn" id="bddAiRunBtn">
@@ -1935,7 +1955,7 @@ function showToast(msg, type='info', duration=3000) {
   const container = document.getElementById('toast-container');
   const toast = document.createElement('div');
   toast.className = `toast ${type}`;
-  toast.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ️'}</span><span>${msg}</span>`;
+  toast.innerHTML = `<span class="toast-icon">${icons[type]||'ℹ️'}</span><span>${typeof escapeHtml==='function'?escapeHtml(msg):String(msg).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;')}</span>`;
   container.appendChild(toast);
   setTimeout(() => {
     toast.classList.add('toast-out');
@@ -2136,9 +2156,9 @@ async function triggerPipeline() {
   setStatus('loading','Parsing CSV…');
   ['step0','step1','step2','step3','step4','step5','step6','step7'].forEach(s=>setStep(s,''));
   activeBrands = new Set();
-
-  setStep('step0','running');
-  let text1 = await readFileAsText(csvFile1);
+  try {
+    setStep('step0','running');
+    let text1 = await readFileAsText(csvFile1);
   let mergedText = text1;
 
   if (csvFile2) {
@@ -2172,6 +2192,12 @@ async function triggerPipeline() {
   setStatus('ready', totalLabel);
   _hidePipelineOverlay();
   showToast(`Pipeline complete — ${totalLabel}`, 'success', 4000);
+  } catch(e) {
+    setStatus('error', 'Pipeline error — check console');
+    console.error('Pipeline error:', e);
+    showToast('Pipeline failed — check console for details', 'error', 6000);
+    _hidePipelineOverlay();
+  }
 }
 
 function parseCSV(text) {
@@ -2664,7 +2690,7 @@ function renderReport() {
     const tr=document.createElement('tr');
     const n=(v,cls)=>v===''||v===null?`<td class="num"></td>`:`<td class="num ${cls}">${Number(v).toLocaleString()}</td>`;
     tr.innerHTML=
-      `<td class="${r.brand?'brand-cell':''}">${r.brand}</td><td>${r.topic}</td>`+
+      `<td class="${r.brand?'brand-cell':''}">${escapeHtml(r.brand)}</td><td>${escapeHtml(r.topic)}</td>`+
       n(r.negative,'num-neg')+n(r.neutral,'num-neu')+n(r.positive,'num-pos')+
       `<td class="col-spacer"></td>`+n(r.engagement,'')+n(r.mention,'');
     tb1.appendChild(tr);
@@ -2675,7 +2701,7 @@ function renderReport() {
   reportData.sentRows.forEach(r=>{
     const tr=document.createElement('tr');
     tr.innerHTML=
-      `<td class="brand-cell">${r.brand}</td>`+
+      `<td class="brand-cell">${escapeHtml(r.brand)}</td>`+
       `<td class="num num-neg">${r.negative.toLocaleString()}</td>`+
       `<td class="num num-neu">${r.neutral.toLocaleString()}</td>`+
       `<td class="num num-pos">${r.positive.toLocaleString()}</td>`+
@@ -2693,6 +2719,7 @@ function renderReport() {
     a.href=URL.createObjectURL(reportData.csvBlob);
     a.download=`sw_data_for_report_${ds}.csv`;
     a.click();
+    setTimeout(()=>URL.revokeObjectURL(a.href), 100);
     showToast('CSV downloaded!', 'success');
   };
 }
@@ -2765,6 +2792,7 @@ function _buildCampCards(camps, metrics, containerId, activeLabelId) {
 }
 
 function renderCampaignTab() {
+  _campPostsMemo = null; // invalidate post cache for this render cycle
   const metrics = reportData.campaignMetrics;
   const camps = Object.keys(metrics?.mention || {}).filter(k => k && k !== '(no campaign)').sort();
   const hasCampaigns = camps.length > 0;
@@ -2790,6 +2818,9 @@ function renderCampaignTab() {
   // Campaign selected — hide prompt, show detail
   document.getElementById('campSelectPrompt').style.display = 'none';
   document.getElementById('campDetail').style.display       = '';
+  // Show Analyse with AI button when a campaign is selected
+  const _cABtn = document.getElementById('campAnalyseBtn');
+  if (_cABtn) _cABtn.style.display = '';
 
   _renderCampKpis(metrics);
   _renderCampChannelTable();
@@ -2842,13 +2873,16 @@ function _renderCampKpis(metrics) {
   `;
 }
 
+let _campPostsMemo = null;
 function _campPostsForActive() {
+  if (_campPostsMemo !== null) return _campPostsMemo;
   const pool = (allRawData.length ? allRawData : rawData);
-  return pool.filter(r => {
+  _campPostsMemo = pool.filter(r => {
     let raw = String(r.Campaign||r.campaign||'').trim();
     if (raw.startsWith('[') && raw.endsWith(']')) raw = raw.slice(1,-1);
     return raw.split(',').map(x=>x.trim()).includes(campActiveCampaign);
   });
+  return _campPostsMemo;
 }
 
 function _renderCampChannelTable() {
@@ -3490,13 +3524,7 @@ function copyOvTable(tableId, btnId) {
     showToast('Table copied to clipboard!', 'success');
     setTimeout(() => { btn.textContent = '⎘ Copy'; btn.classList.remove('copied'); }, 2000);
   }).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = tsv; document.body.appendChild(ta); ta.select();
-    document.execCommand('copy'); document.body.removeChild(ta);
-    const btn = document.getElementById(btnId);
-    btn.textContent = '✔ Copied!'; btn.classList.add('copied');
-    showToast('Table copied to clipboard!', 'success');
-    setTimeout(() => { btn.textContent = '⎘ Copy'; btn.classList.remove('copied'); }, 2000);
+    showToast('Copy failed — please select and copy manually', 'error');
   });
 }
 
@@ -3647,14 +3675,17 @@ function renderSentimentStacked(id, sentData, order) {
   order.forEach(key=>{
     const d=sentData[key]||{positive:0,neutral:0,negative:0};
     const total=(d.positive||0)+(d.neutral||0)+(d.negative||0)||1;
-    const pp=(d.positive/total*100).toFixed(1), np=(d.neutral/total*100).toFixed(1), negp=(d.negative/total*100).toFixed(1);
+    const pp=Math.round(d.positive/total*100), np=Math.round(d.neutral/total*100), negp=100-pp-np;
     const row=document.createElement('div'); row.className='stk-row';
+    const mkSeg=(color,pct,label,count)=>{
+      return `<div class="stk-seg" style="width:0%;background:${color}" title="${label} ${pct}% (${count.toLocaleString()})"><span class="stk-seg-lbl">${pct}%</span></div>`;
+    };
     row.innerHTML=`
-      <div class="stk-lbl" title="${key}">${key}</div>
+      <div class="stk-lbl" title="${escapeHtml(key)}">${escapeHtml(key)}</div>
       <div class="stk-track">
-        <div class="stk-seg" style="width:0%;background:${SENT_COLORS.positive}" title="positive ${pp}% (${d.positive.toLocaleString()})"></div>
-        <div class="stk-seg" style="width:0%;background:${SENT_COLORS.neutral}"  title="neutral ${np}% (${d.neutral.toLocaleString()})"></div>
-        <div class="stk-seg" style="width:0%;background:${SENT_COLORS.negative}" title="negative ${negp}% (${d.negative.toLocaleString()})"></div>
+        ${mkSeg(SENT_COLORS.positive,pp,'positive',d.positive)}
+        ${mkSeg(SENT_COLORS.neutral,np,'neutral',d.neutral)}
+        ${mkSeg(SENT_COLORS.negative,negp,'negative',d.negative)}
       </div>
       <div class="stk-total">${total.toLocaleString()}</div>`;
     el.appendChild(row);
@@ -3721,7 +3752,7 @@ function renderBrandDonuts(brandsSorted) {
     const legend = document.createElement('div');
     legend.className = 'brand-donut-legend';
     segs.forEach(s => {
-      const pct = (s.val / total * 100).toFixed(1);
+      const pct = (s.val / total * 100).toFixed(0);
       const row2 = document.createElement('div');
       row2.className = 'brand-donut-leg-row';
       row2.innerHTML = `
@@ -3800,7 +3831,7 @@ function renderTopicSentBars() {
     const d=buckets[topic]||{positive:0,neutral:0,negative:0};
     const pos=d.positive||0, neu=d.neutral||0, neg=d.negative||0;
     const total=pos+neu+neg||1;
-    const pp=(pos/total*100).toFixed(1), np=(neu/total*100).toFixed(1), negp=(neg/total*100).toFixed(1);
+    const pp=Math.round(pos/total*100), np=Math.round(neu/total*100), negp=100-pp-np;
 
     const wrap=document.createElement('div');
     wrap.style.cssText='display:flex;align-items:center;gap:10px;margin-bottom:11px;';
@@ -3810,13 +3841,21 @@ function renderTopicSentBars() {
     lbl.textContent=topic;
 
     const track=document.createElement('div');
-    track.style.cssText='flex:1;height:22px;display:flex;border-radius:5px;overflow:hidden;background:var(--border);';
+    track.style.cssText='flex:1;height:26px;display:flex;border-radius:5px;overflow:hidden;background:var(--border);';
     ['positive','neutral','negative'].forEach((s,i)=>{
       const seg=document.createElement('div');
-      seg.style.cssText=`width:0%;height:100%;background:${SENT_COLORS[s]};transition:width 0.6s cubic-bezier(0.16,1,0.3,1);`;
-      seg.title=`${s}: ${[pos,neu,neg][i].toLocaleString()} (${[pp,np,negp][i]}%)`;
+      const pctVal=[pp,np,negp][i];
+      const count=[pos,neu,neg][i];
+      seg.style.cssText=`width:0%;height:100%;background:${SENT_COLORS[s]};transition:width 0.6s cubic-bezier(0.16,1,0.3,1);display:flex;align-items:center;justify-content:center;overflow:hidden;white-space:nowrap;`;
+      seg.title=`${s}: ${count.toLocaleString()} (${pctVal}%)`;
+      if (true) {
+        const lbl=document.createElement('span');
+        lbl.style.cssText='font-family:"DM Mono",monospace;font-size:10px;font-weight:700;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.3);pointer-events:none;line-height:1;';
+        lbl.textContent=pctVal+'%';
+        seg.appendChild(lbl);
+      }
       track.appendChild(seg);
-      requestAnimationFrame(()=>{ seg.style.width=[pp,np,negp][i]+'%'; });
+      requestAnimationFrame(()=>{ seg.style.width=pctVal+'%'; });
     });
 
     const vals=document.createElement('div');
@@ -3876,7 +3915,7 @@ function renderBrandTopicSentiment(brandsSorted) {
       const pos=d.positive||0, neu=d.neutral||0, neg=d.negative||0;
       const rawTotal=pos+neu+neg;
       const total=rawTotal||1;
-      const pp=(pos/total*100).toFixed(1), np=(neu/total*100).toFixed(1), negp=(neg/total*100).toFixed(1);
+      const pp=Math.round(pos/total*100), np=Math.round(neu/total*100), negp=100-pp-np;
 
       const cell=document.createElement('div');
       cell.style.cssText='display:flex;flex-direction:column;align-items:center;gap:3px;';
@@ -3890,7 +3929,7 @@ function renderBrandTopicSentiment(brandsSorted) {
         const seg=document.createElement('div');
         seg.style.cssText=`width:100%;height:0%;background:${SENT_COLORS[s]};transition:height 0.7s cubic-bezier(0.16,1,0.3,1);flex-shrink:0;display:flex;align-items:center;justify-content:center;overflow:hidden;`;
         seg.title=`${brand} · ${topic} · ${s}: ${v.toLocaleString()} (${pct}%)`;
-        if (pct >= 12) {
+        if (true) {
           const lbl=document.createElement('span');
           lbl.style.cssText='font-family:"DM Mono",monospace;font-size:9px;font-weight:800;color:#fff;text-shadow:0 1px 2px rgba(0,0,0,.3);pointer-events:none;white-space:nowrap;';
           lbl.textContent=pct+'%';
@@ -4046,17 +4085,29 @@ document.getElementById('tableExportFilteredBtn')?.addEventListener('click', () 
   a.href = URL.createObjectURL(blob);
   a.download = `filtered_data_${data.length}_rows.csv`;
   a.click();
+  setTimeout(()=>URL.revokeObjectURL(a.href), 100);
   showToast(`Exported ${data.length.toLocaleString()} rows as CSV`, 'success');
 });
 
 // ── GOOGLE REVIEW MODULE ─────────────────────────────────────────────────────
-let grData = [];               // filtered google review rows
+let grData = [];               // all google review rows (unfiltered by brand)
+let grActiveBrand = null;      // shared brand filter — null = all brands (Dashboard + AI in sync)
 let grCurrentPage = 1;
 const GR_PAGE_SIZE = 50;
 let grReviewFilter = 'all';    // all | positive | neutral | negative
 let grReviewLimit = 5;         // how many example reviews to show
 let grWcSentiment = 'all';     // word-cloud sentiment filter
 let grWcLang      = 'all';     // word-cloud language filter: 'all' | 'en' | 'th'
+
+// Returns grData filtered by the active brand selection (null = all)
+function _grFiltered() {
+  if (!grActiveBrand) return grData;
+  return grData.filter(row => {
+    let b = String(_grGet(row, 'Brands', 'brands', 'Brand', 'brand') || '').trim();
+    if (b.startsWith('[') && b.endsWith(']')) b = b.slice(1, -1);
+    return b.split(',').map(x => x.trim()).includes(grActiveBrand);
+  });
+}
 
 // Detect Google Review source column candidates
 function _grGetSource(row) {
@@ -4090,22 +4141,109 @@ function updateGooglePanel() {
     return;
   }
 
+  // Reset brand selection on fresh data load
+  grActiveBrand = null;
+
   document.getElementById('greviewEmpty').style.display = 'none';
   document.getElementById('greviewContent').style.display = '';
 
-  document.getElementById('grSubnavMeta').textContent =
-    `${grData.length.toLocaleString()} Google Reviews loaded`;
+  const _grMetaSpan = document.getElementById('grSubnavMetaText');
+  if (_grMetaSpan) _grMetaSpan.textContent = `${grData.length.toLocaleString()} Google Reviews loaded`;
 
+  // Show Analyse with AI button (only visible on dashboard subtab)
+  const _grABtn = document.getElementById('grAnalyseBtn');
+  if (_grABtn) _grABtn.style.display = '';
+
+  renderGrDashBrandPills();
   renderGrDashboard();
   renderGrRawTable();
-  populateGrAiModelSelect();
-  populateGrAiBrandPills();
+  _grAiInit();
+}
+
+// ── GR BRAND SELECTOR (shared Dashboard ↔ AI) ────────────────────────────────
+function renderGrDashBrandPills() {
+  const container = document.getElementById('grDashBrandPills');
+  if (!container) return;
+  container.innerHTML = '';
+
+  // Collect unique brands from grData
+  const brandCount = {};
+  grData.forEach(row => {
+    let b = String(_grGet(row, 'Brands', 'brands', 'Brand', 'brand') || '').trim();
+    if (b.startsWith('[') && b.endsWith(']')) b = b.slice(1, -1);
+    b.split(',').map(x => x.trim()).filter(Boolean).forEach(x => {
+      brandCount[x] = (brandCount[x] || 0) + 1;
+    });
+  });
+  const brands = Object.keys(brandCount).sort((a, b) => brandCount[b] - brandCount[a]);
+
+  // Update active label
+  _grUpdateActiveBrandLabel();
+
+  // "All Brands" pill
+  const allPill = document.createElement('button');
+  allPill.className = 'brand-pill' + (grActiveBrand === null ? ' active' : '');
+  allPill.textContent = 'All Brands';
+  allPill.addEventListener('click', () => { grActiveBrand = null; _grSelectBrand(); });
+  container.appendChild(allPill);
+
+  // Per-brand pills
+  brands.forEach((brand, i) => {
+    const color = BDD_COLORS[i % BDD_COLORS.length];
+    const isActive = brand === grActiveBrand;
+    const pill = document.createElement('button');
+    pill.className = 'brand-pill' + (isActive ? ' active' : '');
+    if (isActive) { pill.style.background = color; pill.style.borderColor = color; }
+    else { pill.style.background = color+'22'; pill.style.borderColor = color+'55'; pill.style.color = color; }
+    pill.textContent = brand;
+    pill.addEventListener('click', () => { grActiveBrand = brand; _grSelectBrand(); });
+    pill.addEventListener('mouseenter', () => { if (brand !== grActiveBrand) { pill.style.background = color+'44'; pill.style.borderColor = color; } });
+    pill.addEventListener('mouseleave', () => { if (brand !== grActiveBrand) { pill.style.background = color+'22'; pill.style.borderColor = color+'55'; } });
+    container.appendChild(pill);
+  });
+}
+
+function _grUpdateActiveBrandLabel() {
+  const lbl = document.getElementById('grActiveBrandLabel');
+  if (lbl) lbl.textContent = grActiveBrand ? '— ' + grActiveBrand : '';
+  // Sync subnav meta
+  const _metaSpan = document.getElementById('grSubnavMetaText');
+  if (_metaSpan) {
+    const filtered = _grFiltered();
+    _metaSpan.textContent = grActiveBrand
+      ? `${filtered.length.toLocaleString()} reviews · ${grActiveBrand}`
+      : `${grData.length.toLocaleString()} Google Reviews loaded`;
+  }
+}
+
+function _grSelectBrand() {
+  // Sync grAiActiveBrand so AI panel stays linked
+  grAiActiveBrand = grActiveBrand;
+  // Re-render dashboard pills (to reflect new active state)
+  renderGrDashBrandPills();
+  _grUpdateActiveBrandLabel();
+  // Re-render all dashboard content with filtered data
+  grReviewFilter = 'all';
+  grReviewLimit = 5;
+  grWcSentiment = 'all';
+  document.querySelectorAll('.gr-rev-pill').forEach(b => b.classList.toggle('active', b.dataset.rev === 'all'));
+  document.querySelectorAll('input[name="grWcSent"]').forEach(r => { r.checked = r.value === 'all'; });
+  renderGrDashboard();
+  // Sync AI panel pills if it's open
+  if (document.getElementById('gr-panel-ai')?.classList.contains('active')) {
+    populateGrAiBrandPills();
+  } else {
+    // Update AI brand pills in background so they're ready
+    populateGrAiBrandPills();
+  }
+  _grAiUpdatePostCount();
 }
 
 // ── DASHBOARD ────────────────────────────────────────────────────────────────
 function renderGrDashboard() {
+  const pool = _grFiltered();   // respects active brand filter
   // ── KPIs
-  const uniq = new Set(grData.map(r => r.id || r.ID || JSON.stringify(r))).size;
+  const uniq = new Set(pool.map(r => r.id || r.ID || JSON.stringify(r))).size;
   document.getElementById('grUniqueMentions').textContent = uniq.toLocaleString();
 
   // Mentions/day based on days input
@@ -4113,7 +4251,7 @@ function renderGrDashboard() {
 
   // Net Sentiment (pos - neg) / total * 100
   const sentCounts = { positive:0, neutral:0, negative:0 };
-  grData.forEach(r => {
+  pool.forEach(r => {
     const s = String(r.sentiment || '').toLowerCase().trim();
     if (sentCounts[s] !== undefined) sentCounts[s]++;
   });
@@ -4124,7 +4262,7 @@ function renderGrDashboard() {
   nssEl.style.color = nss >= 20 ? 'var(--pos)' : (nss <= -20 ? 'var(--neg)' : 'var(--neu)');
 
   // Date range
-  const dates = grData
+  const dates = pool
     .map(r => new Date(_grGet(r, 'created_at', 'Created_At', 'date', 'Date')))
     .filter(d => !isNaN(d.getTime()));
   if (dates.length) {
@@ -4147,7 +4285,7 @@ function renderGrDashboard() {
 
 function updateGrMentionsPerDay() {
   const days = parseInt(document.getElementById('grDaysInput').value) || 30;
-  const total = grData.length;
+  const total = _grFiltered().length;
   const perDay = total / days;
   document.getElementById('grMentionsPerDay').textContent =
     perDay >= 10 ? perDay.toFixed(0) : perDay.toFixed(1);
@@ -4286,7 +4424,7 @@ function renderGrCategoryStack() {
 
   // Group by Detail × sentiment (exploded on Detail comma-split & bracket-stripped)
   const cats = {}; // { categoryName: { positive, neutral, negative, total } }
-  grData.forEach(r => {
+  _grFiltered().forEach(r => {
     let detail = _grGet(r, 'Detail', 'detail', 'Category', 'category');
     if (!detail) return;
     let s = String(detail).trim();
@@ -4397,9 +4535,10 @@ function renderGrWordCloud() {
   const el = document.getElementById('grWordCloud');
   el.innerHTML = '';
 
-  let pool = grData;
+  const base = _grFiltered();
+  let pool = base;
   if (grWcSentiment !== 'all') {
-    pool = grData.filter(r => String(r.sentiment || '').toLowerCase() === grWcSentiment);
+    pool = base.filter(r => String(r.sentiment || '').toLowerCase() === grWcSentiment);
   }
 
   const freq = {};
@@ -4513,9 +4652,10 @@ function renderGrExampleReviews() {
   const el = document.getElementById('grExampleReviews');
   el.innerHTML = '';
 
-  let pool = grData;
+  const base = _grFiltered();
+  let pool = base;
   if (grReviewFilter !== 'all') {
-    pool = grData.filter(r => String(r.sentiment || '').toLowerCase() === grReviewFilter);
+    pool = base.filter(r => String(r.sentiment || '').toLowerCase() === grReviewFilter);
   }
 
   // Sort by engagement score desc if available, else by date desc, else original
@@ -4594,7 +4734,7 @@ function renderGrTop5Branches() {
   // Aggregate by branch name — look for title/Title first (Google Maps page name),
   // then location/Location, then branch/Branch. Never fall back to Brands.
   const branches = {};
-  grData.forEach(r => {
+  _grFiltered().forEach(r => {
     const branch = String(_grGet(r, 'title', 'Title', 'page', 'Page', 'location', 'Location', 'branch', 'Branch') || '').trim();
     if (!branch || branch === 'null') return;
     const sent = String(r.sentiment || '').toLowerCase().trim();
@@ -4705,7 +4845,7 @@ function renderGrRawTable() {
   const search = (document.getElementById('grTableSearch').value || '').toLowerCase();
   const sentF  = document.getElementById('grSentFilter').value;
 
-  let filtered = grData.filter(row => {
+  let filtered = _grFiltered().filter(row => {
     if (sentF !== '__all__' && String(row.sentiment || '').toLowerCase() !== sentF) return false;
     if (search) {
       const hay = Object.values(row).join(' ').toLowerCase();
@@ -4772,7 +4912,11 @@ function renderGrRawTable() {
 
 document.getElementById('grPrevPage').addEventListener('click', () => { grCurrentPage--; renderGrRawTable(); });
 document.getElementById('grNextPage').addEventListener('click', () => { grCurrentPage++; renderGrRawTable(); });
-document.getElementById('grTableSearch').addEventListener('input', () => { grCurrentPage = 1; renderGrRawTable(); });
+let _grSearchDebounceTimer = null;
+document.getElementById('grTableSearch').addEventListener('input', () => {
+  clearTimeout(_grSearchDebounceTimer);
+  _grSearchDebounceTimer = setTimeout(() => { grCurrentPage = 1; renderGrRawTable(); }, 250);
+});
 document.getElementById('grSentFilter').addEventListener('change', () => { grCurrentPage = 1; renderGrRawTable(); });
 
 // ── GR SUB-TAB SWITCHER ─────────────────────────────────────────────────────
@@ -4792,11 +4936,23 @@ document.querySelectorAll('.gr-subtab').forEach(btn => {
     const prefix = isGr ? 'gr-panel-' : 'bdd-panel-';
     const target = document.getElementById(prefix + tabId);
     if (target) target.classList.add('active');
+    // Init AI panel when switching to it
+    if (isGr && tabId === 'ai') _grAiInit();
+    if (!isGr && tabId === 'ai') _bddAiInit();
+    // Toggle Analyse with AI button visibility
+    if (typeof _updateAnalyseBtns === 'function') _updateAnalyseBtns(nav, tabId);
   });
 });
 
 // ── GR AI ANALYSIS MODULE ────────────────────────────────────────────────────
 let grAiActiveBrand = null; // null = all brands
+function _grAiInit() {
+  populateGrAiModelSelect();
+  populateGrAiBrandPills();
+  _grAiUpdatePostCount();
+}
+
+
 
 // Multi-select helpers scoped to grAi
 function grAiMsToggle(key) {
@@ -4852,6 +5008,9 @@ function populateGrAiBrandPills() {
   if (!container) return;
   container.innerHTML = '';
 
+  // Sync AI active brand from shared dashboard state on every render
+  grAiActiveBrand = grActiveBrand;
+
   // Count reviews per brand then sort descending
   const brandCount = {};
   grData.forEach(row => {
@@ -4863,20 +5022,29 @@ function populateGrAiBrandPills() {
   });
   const brands = Object.keys(brandCount).sort((a, b) => brandCount[b] - brandCount[a]);
 
-  // Helper to build a pill
+  // Update active label
+  const lbl = document.getElementById('grAiActiveLabel');
+  if (lbl) lbl.textContent = grAiActiveBrand ? '— ' + grAiActiveBrand : '';
+
   function makePill(label, isActive, color, onClick) {
     const pill = document.createElement('button');
-    pill.className = 'bdd-ai-brand-pill' + (isActive ? ' active' : '');
-    if (isActive && color) pill.style.color = color;
-    pill.innerHTML = `<span class="pill-dot" style="background:${isActive ? (color||'var(--accent)') : 'rgba(255,255,255,.6)'}"></span>${label}`;
+    pill.className = 'brand-pill' + (isActive ? ' active' : '');
+    if (isActive && color) { pill.style.background = color; pill.style.borderColor = color; }
+    else if (color) { pill.style.background = color+'22'; pill.style.borderColor = color+'55'; pill.style.color = color; }
+    pill.textContent = label;
     pill.addEventListener('click', onClick);
+    pill.addEventListener('mouseenter', () => { if (!isActive && color) { pill.style.background = color+'44'; pill.style.borderColor = color; } });
+    pill.addEventListener('mouseleave', () => { if (!isActive && color) { pill.style.background = color+'22'; pill.style.borderColor = color+'55'; } });
     return pill;
   }
 
   // "All Brands" pill
   const allPill = makePill('All Brands', grAiActiveBrand === null, null, () => {
+    grActiveBrand = null;
     grAiActiveBrand = null;
     populateGrAiBrandPills();
+    renderGrDashBrandPills();
+    _grUpdateActiveBrandLabel();
     _grAiUpdatePostCount();
   });
   container.appendChild(allPill);
@@ -4886,8 +5054,11 @@ function populateGrAiBrandPills() {
     const color = BDD_COLORS[i % BDD_COLORS.length];
     const isActive = brand === grAiActiveBrand;
     const pill = makePill(brand, isActive, color, () => {
+      grActiveBrand = brand;
       grAiActiveBrand = brand;
       populateGrAiBrandPills();
+      renderGrDashBrandPills();
+      _grUpdateActiveBrandLabel();
       _grAiUpdatePostCount();
     });
     container.appendChild(pill);
@@ -5065,6 +5236,56 @@ const AI_MODELS = {
 
 // Initialise model selectors on page load
 populateBddAiModelSelect();
+
+// BDD AI init — called when switching to the AI subtab
+function _bddAiInit() {
+  populateBddAiModelSelect();
+  _renderBddAiBrandPills();
+  populateBddAiFilters();
+  _bddAiUpdatePostCount();
+}
+
+// Render BDD AI brand pills in the white selector section (dashboard-style)
+function _renderBddAiBrandPills() {
+  const container = document.getElementById('bddAiBrandPills');
+  if (!container) return;
+  container.innerHTML = '';
+
+  const pool = allRawData.length ? allRawData : rawData;
+  const brandSet = new Set();
+  pool.forEach(row => {
+    let b = String(row.Brands||'').trim();
+    if (b.startsWith('[')&&b.endsWith(']')) b=b.slice(1,-1);
+    b.split(',').map(x=>x.trim()).filter(Boolean).forEach(x=>brandSet.add(x));
+  });
+  const brands = [...brandSet].sort();
+
+  // Update active label
+  const lbl = document.getElementById('bddAiActiveLabel');
+  if (lbl) lbl.textContent = bddActiveBrand ? '— ' + bddActiveBrand : '';
+
+  brands.forEach((brand, i) => {
+    const color = BDD_COLORS[i % BDD_COLORS.length];
+    const isActive = brand === bddActiveBrand;
+    const pill = document.createElement('button');
+    pill.className = 'brand-pill' + (isActive ? ' active' : '');
+    if (isActive) { pill.style.background = color; pill.style.borderColor = color; }
+    else { pill.style.background = color+'22'; pill.style.borderColor = color+'55'; pill.style.color = color; }
+    pill.textContent = brand;
+    pill.addEventListener('click', () => {
+      bddActiveBrand = brand;
+      _renderBddAiBrandPills();
+      populateBddAiFilters();
+      _bddAiUpdatePostCount();
+    });
+    pill.addEventListener('mouseenter', () => { if (!isActive) { pill.style.background = color+'44'; pill.style.borderColor = color; } });
+    pill.addEventListener('mouseleave', () => { if (!isActive) { pill.style.background = color+'22'; pill.style.borderColor = color+'55'; } });
+    container.appendChild(pill);
+  });
+
+  populateBddAiFilters();
+  _bddAiUpdatePostCount();
+}
 
 // ── GLOBAL API KEY BAR ───────────────────────────────────────────────────────
 function _applyGeminiKey(val) {
@@ -5283,16 +5504,7 @@ function copyTableToClipboard(tbodyId, btnId) {
     showToast('Table copied to clipboard!', 'success');
     setTimeout(() => { btn.textContent = '⎘ Copy'; btn.classList.remove('copied'); }, 2000);
   }).catch(() => {
-    const ta = document.createElement('textarea');
-    ta.value = finalText;
-    document.body.appendChild(ta);
-    ta.select();
-    document.execCommand('copy');
-    document.body.removeChild(ta);
-    btn.textContent = '✔ Copied!';
-    btn.classList.add('copied');
-    showToast('Table copied to clipboard!', 'success');
-    setTimeout(() => { btn.textContent = '⎘ Copy'; btn.classList.remove('copied'); }, 2000);
+    showToast('Copy failed — please select and copy manually', 'error');
   });
 }
 
@@ -5364,38 +5576,18 @@ function updateBrandDeepDive() {
   renderBddTopicSentBars();
   renderBddCompareTable();
   renderBddTopPosts();
-  // Update brand label and post count in the AI Social Listening card
-  const lbl = document.getElementById('bddAiBrandLabel');
-  if (lbl) lbl.textContent = bddActiveBrand || 'selected brand';
+  // Update AI panel active label when brand changes from dashboard
+  const aiLbl = document.getElementById('bddAiActiveLabel');
+  if (aiLbl) aiLbl.textContent = bddActiveBrand ? '— ' + bddActiveBrand : '';
   populateBddAiFilters();
   _bddAiUpdatePostCount();
-  _renderBddAiBrandPills();
+  // Re-render AI brand pills only if the AI subpanel is currently visible
+  if (document.getElementById('bdd-panel-ai')?.classList.contains('active')) {
+    _renderBddAiBrandPills();
+  }
 }
 
-// ── BDD AI BRAND PILL SELECTOR ────────────────────────────────────────────────
-function _renderBddAiBrandPills() {
-  const container = document.getElementById('bddAiBrandPills');
-  if (!container) return;
-  container.innerHTML = '';
-  const brands = reportData.sentRows.map(r => r.brand).filter(Boolean);
-  brands.forEach((b, i) => {
-    const color = BDD_COLORS[i % BDD_COLORS.length];
-    const isActive = b === bddActiveBrand;
-    const pill = document.createElement('button');
-    pill.className = 'bdd-ai-brand-pill' + (isActive ? ' active' : '');
-    pill.style.setProperty('--pill-color', color);
-    if (isActive) pill.style.color = color;
-    pill.innerHTML = `<span class="pill-dot" style="background:${isActive ? color : 'rgba(255,255,255,.6)'}"></span>${b}`;
-    pill.addEventListener('click', () => {
-      bddActiveBrand = b;
-      bddPostSentFilter = 'all';
-      bddPostLimit = 5;
-      document.querySelectorAll('[data-bdd-sent]').forEach(x => x.classList.toggle('active', x.dataset.bddSent === 'all'));
-      updateBrandDeepDive();
-    });
-    container.appendChild(pill);
-  });
-}
+// (The full _renderBddAiBrandPills definition is above, near populateBddAiModelSelect)
 function renderBddHero() {
   const brand = bddActiveBrand;
   const color = bddColor(brand);
@@ -5404,8 +5596,11 @@ function renderBddHero() {
   document.getElementById('bddHeroBadge').textContent = brand.charAt(0).toUpperCase();
   document.getElementById('bddHeroBadge').style.background = `linear-gradient(135deg, ${color}, ${color}cc)`;
   document.getElementById('bddHeroName').textContent = brand;
-  const metaEl = document.getElementById('bddSubnavMeta');
-  if (metaEl) metaEl.textContent = brand;
+  const _bddMetaSpan = document.getElementById('bddSubnavMetaText');
+  if (_bddMetaSpan) _bddMetaSpan.textContent = brand;
+  // Show Analyse with AI button when a brand is selected (dashboard subtab only)
+  const _bABtn = document.getElementById('bddAnalyseBtn');
+  if (_bABtn) _bABtn.style.display = document.getElementById('bdd-panel-dashboard')?.classList.contains('active') ? '' : 'none';
 
   const metrics = reportData.metrics || {};
   const row = reportData.sentRows.find(r => r.brand === brand);
@@ -5580,7 +5775,7 @@ function renderBddTopicBars() {
     const row = document.createElement('div');
     row.className = 'bdd-topic-bar-row';
     row.innerHTML = `
-      <div class="bdd-topic-lbl" title="${d.topic}">${d.topic}</div>
+      <div class="bdd-topic-lbl" title="${escapeHtml(d.topic)}">${escapeHtml(d.topic)}</div>
       <div class="bdd-topic-track">
         <div class="bdd-topic-seg" style="width:0%;background:${SENT_COLORS.positive}" title="positive: ${d.positive.toLocaleString()}"></div>
         <div class="bdd-topic-seg" style="width:0%;background:${SENT_COLORS.neutral}"  title="neutral: ${d.neutral.toLocaleString()}"></div>
@@ -5834,7 +6029,7 @@ function renderBddCompareTable() {
 
     tr.innerHTML = `
       <td style="font-weight:${isActive?'800':'600'};color:${isActive?color:'var(--text2)'}">
-        ${isActive?'▶ ':''}${r.brand}
+        ${isActive?'▶ ':''}${escapeHtml(r.brand)}
       </td>
       <td class="num">
         <div class="bdd-bar-inline">
@@ -6136,8 +6331,8 @@ function populateBddAiFilters() {
 
   toShow.forEach(ch => {
     const div = document.createElement('div'); div.className='ms-option'; div.dataset.value=ch;
-    div.setAttribute('onclick',`bddAiMsToggleOption('Source',this)`);
-    div.innerHTML=`<input type="checkbox"> ${ch}`; drop.appendChild(div);
+    div.addEventListener('click', () => bddAiMsToggleOption('Source', div));
+    div.innerHTML=`<input type="checkbox"> ${escapeHtml(ch)}`; drop.appendChild(div);
   });
 
   drop.querySelector('.ms-all').classList.add('selected');
@@ -6384,6 +6579,10 @@ Start directly with **Brand Health Overview**.`;
 // ── GR AI PROMPT BUILDER ─────────────────────────────────────────────────────
 // Mirrors _buildBddGoogleReviewPrompts but reads from GR-scoped UI elements
 function _buildGrAiPrompts(rows) {
+  return _buildGrReviewPrompts(rows);
+}
+
+function _buildGrReviewPrompts(rows) {
   const brand       = grAiActiveBrand || 'All Brands';
   const sents       = grAiMsGetValues('Sent');
   const sent        = sents[0]==='__all__' ? 'all sentiments' : `"${sents.join(', ')}" only`;
@@ -6454,6 +6653,98 @@ ${enriched.join('\n\n')}
 
 Output only the four sections as instructed. No introduction. No conclusion. Start directly with **Total Volume & Sentiment Distribution**.`;
 
+  return { system, user };
+}
+
+function _buildGrSentimentPrompts(rows) {
+  const brand = grAiActiveBrand || 'All Brands';
+  const sents = grAiMsGetValues('Sent');
+  const sent  = sents[0]==='__all__' ? 'all sentiments' : `"${sents.join(', ')}" only`;
+  const instruction = document.getElementById('grAiInstruction').value.trim();
+  const enriched = rows.map((r,i) => {
+    const loc = String(r.title||r.page||'').trim() || 'Unknown Location';
+    return `[${i+1}] [${r.sentiment}] [${loc}] ${r.text}`;
+  });
+
+  if (instruction) {
+    return {
+      system: `You are an expert Customer Experience Analyst. Follow the custom prompt precisely.`,
+      user:   `Brand: "${brand}" | Filter: ${sent}\n\n${instruction}\n\n--- REVIEWS START ---\n${enriched.join('\n\n')}\n--- REVIEWS END ---`,
+    };
+  }
+
+  const system = `You are an expert Customer Experience & Sentiment Analyst for Thai food & beverage brands.
+Analyse Google Reviews and produce a structured sentiment intelligence report.
+
+Your output MUST follow this exact structure:
+
+**Sentiment Overview**
+State the exact counts and percentages for Positive, Neutral, and Negative reviews. Note the dominant tone and any polarisation.
+
+**Positive Drivers**
+Top 3–5 themes driving positive sentiment. For each: bold label, 1–2 sentences citing specific reviewer language and locations.
+
+**Negative Drivers**
+Top 3–5 themes driving negative sentiment. For each: bold label, 1–2 sentences citing specific complaints and locations. End each with risk level: 🔴 High / 🟡 Medium / 🟢 Low.
+
+**Sentiment by Location**
+Which locations have the best and worst sentiment ratios. Cite counts. Max 5 locations.
+
+**Strategic Recommendations**
+3 concrete actions to improve overall sentiment score, each linked to a finding above.
+
+Rules: Be specific. Reference locations, counts, and reviewer language. No filler.`;
+
+  const user = `Analyse the sentiment in ${rows.length} Google Reviews for "${brand}" (${sent}).
+
+--- REVIEWS START ---
+${enriched.join('\n\n')}
+--- REVIEWS END ---
+
+Start directly with **Sentiment Overview**.`;
+  return { system, user };
+}
+
+function _buildGrContentPrompts(rows) {
+  const brand = grAiActiveBrand || 'All Brands';
+  const sents = grAiMsGetValues('Sent');
+  const sent  = sents[0]==='__all__' ? 'all sentiments' : `"${sents.join(', ')}" only`;
+  const instruction = document.getElementById('grAiInstruction').value.trim();
+  const texts = rows.map((r,i) => `[${i+1}] [${r.sentiment}] ${r.text}`);
+
+  if (instruction) {
+    return {
+      system: `You are an expert Content & Customer Voice Analyst. Follow the custom prompt precisely.`,
+      user:   `Brand: "${brand}" | Filter: ${sent}\n\n${instruction}\n\n--- REVIEWS START ---\n${texts.join('\n')}\n--- REVIEWS END ---`,
+    };
+  }
+
+  const system = `You are an expert Content & Customer Voice Analyst for Thai food & beverage brands.
+Analyse Google Review text to surface content themes, messaging gaps, and creative opportunities.
+
+Your output MUST follow this exact structure:
+
+**Top Content Themes**
+4–6 recurring themes in reviewer language. For each: bold label, describe what reviewers say, note dominant sentiment.
+
+**Messaging Gaps**
+What customers want to talk about that the brand's experience doesn't address. Identify 2–3 unmet expectations.
+
+**High-Impact Language**
+5–8 verbatim phrases or recurring words that best capture the customer voice (high-engagement preferred).
+
+**Creative Opportunities**
+3 specific content or marketing directions the brand could take, grounded in themes above.
+
+Rules: Quote or paraphrase actual reviewer language. Be specific and actionable.`;
+
+  const user = `Analyse content themes in ${rows.length} Google Reviews for "${brand}" (${sent}).
+
+--- REVIEWS START ---
+${texts.join('\n')}
+--- REVIEWS END ---
+
+Start directly with **Top Content Themes**.`;
   return { system, user };
 }
 
@@ -6632,6 +6923,9 @@ document.getElementById('campSubnav')?.querySelectorAll('.gr-subtab').forEach(bt
     document.querySelectorAll('#camp-panel-dashboard, #camp-panel-ai').forEach(p => p.classList.remove('active'));
     document.getElementById(`camp-panel-${target}`)?.classList.add('active');
     if (target === 'ai') _campAiInit();
+    // Toggle Analyse with AI button
+    const campAnalyseBtn = document.getElementById('campAnalyseBtn');
+    if (campAnalyseBtn) campAnalyseBtn.style.display = target === 'dashboard' ? '' : 'none';
   });
 });
 
@@ -6702,8 +6996,8 @@ function populateCampAiFilters() {
 
   toShow.forEach(ch => {
     const div = document.createElement('div'); div.className = 'ms-option'; div.dataset.value = ch;
-    div.setAttribute('onclick', `campAiMsToggleOption('Source',this)`);
-    div.innerHTML = `<input type="checkbox"> ${ch}`; drop.appendChild(div);
+    div.addEventListener('click', () => campAiMsToggleOption('Source', div));
+    div.innerHTML = `<input type="checkbox"> ${escapeHtml(ch)}`; drop.appendChild(div);
   });
   drop.querySelector('.ms-all').classList.add('selected');
   drop.querySelector('.ms-all input').checked = true;
@@ -7059,6 +7353,97 @@ document.getElementById('campAiRunBtn')?.addEventListener('click', async () => {
   });
 });
 
+
+// ── EVENT WIRING (replaces all inline onclick / onfocus / onblur in HTML) ─────
+
+// Keyboard shortcut overlay close button
+document.getElementById('kbCloseBtn')?.addEventListener('click', () => document.getElementById('kbOverlay').classList.remove('show'));
+
+// Report copy buttons
+document.getElementById('copyBtn1')?.addEventListener('click', () => copyTableToClipboard('topicTableBody','copyBtn1'));
+document.getElementById('copyBtn2')?.addEventListener('click', () => copyTableToClipboard('sentTableBody','copyBtn2'));
+
+// Overview copy buttons
+document.getElementById('ovCopyEng')?.addEventListener('click', () => copyOvTable('ovTableEng','ovCopyEng'));
+document.getElementById('ovCopyMen')?.addEventListener('click', () => copyOvTable('ovTableMen','ovCopyMen'));
+document.getElementById('ovCopyView')?.addEventListener('click', () => copyOvTable('ovTableView','ovCopyView'));
+
+// GR AI — ms-dropdown (trigger + delegated option clicks)
+document.getElementById('grAiMsTriggerSent')?.addEventListener('click', () => grAiMsToggle('Sent'));
+document.getElementById('grAiMsDropSent')?.addEventListener('click', e => {
+  const opt = e.target.closest('.ms-option'); if (!opt) return;
+  opt.classList.contains('ms-all') ? grAiMsToggleAll('Sent', opt) : grAiMsToggleOption('Sent', opt);
+});
+
+// GR AI — analysis type buttons
+
+// BDD AI — analysis type buttons
+document.getElementById('bddAiTypeSocial')?.addEventListener('click', () => setBddAiType('social'));
+document.getElementById('bddAiTypeBrand')?.addEventListener('click', () => setBddAiType('brand'));
+document.getElementById('bddAiTypeSentiment')?.addEventListener('click', () => setBddAiType('sentiment'));
+
+// BDD AI — ms-dropdowns (trigger + delegated option clicks)
+document.getElementById('bddAiMsTriggerSource')?.addEventListener('click', () => bddAiMsToggle('Source'));
+document.getElementById('bddAiMsDropSource')?.addEventListener('click', e => {
+  const opt = e.target.closest('.ms-option'); if (!opt) return;
+  opt.classList.contains('ms-all') ? bddAiMsToggleAll('Source', opt) : bddAiMsToggleOption('Source', opt);
+});
+document.getElementById('bddAiMsTriggerSent')?.addEventListener('click', () => bddAiMsToggle('Sent'));
+document.getElementById('bddAiMsDropSent')?.addEventListener('click', e => {
+  const opt = e.target.closest('.ms-option'); if (!opt) return;
+  opt.classList.contains('ms-all') ? bddAiMsToggleAll('Sent', opt) : bddAiMsToggleOption('Sent', opt);
+});
+
+// Campaign AI — analysis type buttons
+document.getElementById('campAiTypePerformance')?.addEventListener('click', () => setCampAiType('performance'));
+document.getElementById('campAiTypeSentiment')?.addEventListener('click', () => setCampAiType('sentiment'));
+document.getElementById('campAiTypeContent')?.addEventListener('click', () => setCampAiType('content'));
+
+// Campaign AI — ms-dropdowns (trigger + delegated option clicks)
+document.getElementById('campAiMsTriggerSource')?.addEventListener('click', () => campAiMsToggle('Source'));
+document.getElementById('campAiMsDropSource')?.addEventListener('click', e => {
+  const opt = e.target.closest('.ms-option'); if (!opt) return;
+  opt.classList.contains('ms-all') ? campAiMsToggleAll('Source', opt) : campAiMsToggleOption('Source', opt);
+});
+document.getElementById('campAiMsTriggerSent')?.addEventListener('click', () => campAiMsToggle('Sent'));
+document.getElementById('campAiMsDropSent')?.addEventListener('click', e => {
+  const opt = e.target.closest('.ms-option'); if (!opt) return;
+  opt.classList.contains('ms-all') ? campAiMsToggleAll('Sent', opt) : campAiMsToggleOption('Sent', opt);
+});
+
+// ── ANALYSE WITH AI BUTTONS ──────────────────────────────────────────────────
+// Show/hide button based on active subpanel; click switches to AI subtab
+
+(function() {
+  // GR
+  document.getElementById('grAnalyseBtn')?.addEventListener('click', () => {
+    const btn = document.querySelector('#greviewContent .gr-subnav .gr-subtab[data-gr-tab="ai"]');
+    if (btn) btn.click();
+  });
+
+  document.getElementById('campAnalyseBtn')?.addEventListener('click', () => {
+    const btn = document.querySelector('#campSubnav .gr-subtab[data-camp-tab="ai"]');
+    if (btn) btn.click();
+  });
+
+  document.getElementById('bddAnalyseBtn')?.addEventListener('click', () => {
+    const btn = document.querySelector('#bddSubnav .gr-subtab[data-bdd-tab="ai"]');
+    if (btn) btn.click();
+  });
+
+  // Show the button when on dashboard, hide when on AI tab
+  // Patch the unified gr-subtab switcher to toggle visibility
+  function _updateAnalyseBtns(subnavEl, activeTab) {
+    const isGr   = !!subnavEl.querySelector('[data-gr-tab]');
+    const isBdd  = !!subnavEl.querySelector('[data-bdd-tab]');
+    const isCamp = !!subnavEl.querySelector('[data-camp-tab]');
+    const btnId  = isGr ? 'grAnalyseBtn' : (isBdd ? 'bddAnalyseBtn' : (isCamp ? 'campAnalyseBtn' : null));
+    if (!btnId) return;
+    const analyseBtn = document.getElementById(btnId);
+    if (analyseBtn) analyseBtn.style.display = (activeTab === 'dashboard') ? '' : 'none';
+  }
+  window._updateAnalyseBtns = _updateAnalyseBtns;
+})();
 
 initPyodide().catch(err=>{
   setStatus('error','Python failed');
