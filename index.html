@@ -104,7 +104,7 @@ header{display:flex;align-items:center;justify-content:space-between;padding:0 2
 .panel.active{display:block}
 
 /* ── EMPTY STATE ── */
-.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:72px 20px;gap:12px;text-align:center}
+.empty-state{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:72px 20px;gap:16px;text-align:center}
 .empty-icon{font-size:38px;opacity:.2}
 .empty-title{font-family:"Bricolage Grotesque",sans-serif;font-size:18px;font-weight:700;color:var(--text3)}
 .empty-sub{font-size:13px;color:var(--text3);max-width:280px;line-height:1.5}
@@ -635,6 +635,76 @@ button:focus:not(:focus-visible){outline:none}
 .panel{transition:none}
 .kpi-card,.stat-card,.card{transition:box-shadow .2s}
 .kpi-card:hover,.stat-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.08)}
+
+/* ── GIMMICK 1: MASCOT MOOD INDICATOR ── */
+#moodIndicator{font-size:18px;line-height:1;transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .3s;cursor:default;user-select:none}
+#moodIndicator.bump{animation:moodBump .4s cubic-bezier(.34,1.56,.64,1)}
+@keyframes moodBump{0%{transform:scale(1)}40%{transform:scale(1.5) rotate(-10deg)}70%{transform:scale(0.9) rotate(5deg)}100%{transform:scale(1) rotate(0deg)}}
+#moodTooltip{position:absolute;top:calc(100% + 8px);right:0;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:11px;font-weight:500;color:var(--text2);white-space:nowrap;pointer-events:none;opacity:0;transform:translateY(-4px);transition:all .2s;z-index:200;box-shadow:var(--shadow-sm)}
+#moodWrap{position:relative;display:flex;align-items:center}
+#moodWrap:hover #moodTooltip{opacity:1;transform:translateY(0)}
+
+/* ── GIMMICK 2: CONFETTI ── */
+#confettiCanvas{position:fixed;inset:0;pointer-events:none;z-index:9999;display:none}
+
+/* ── GIMMICK 3: ANIMATED UPLOAD ZONE ── */
+.upload-zone .upload-icon{transition:transform .3s cubic-bezier(.34,1.56,.64,1),filter .2s}
+.upload-zone.drag-active .upload-icon{transform:scale(1.3) rotate(-8deg);filter:drop-shadow(0 2px 6px rgba(37,99,235,.35))}
+.upload-zone.file-success{border-color:var(--pos)!important;background:var(--pos-lt)!important;animation:successPop .5s cubic-bezier(.34,1.56,.64,1)}
+@keyframes successPop{0%{transform:scale(1)}40%{transform:scale(1.03)}70%{transform:scale(0.98)}100%{transform:scale(1)}}
+.upload-zone .check-draw{display:none;position:absolute;inset:0;align-items:center;justify-content:center;pointer-events:none}
+.upload-zone.file-success .check-draw{display:flex}
+.check-draw svg{width:28px;height:28px}
+.check-draw circle{stroke:var(--pos);stroke-width:2;fill:none;stroke-dasharray:70;stroke-dashoffset:70;animation:drawCircle .4s ease forwards}
+.check-draw path{stroke:var(--pos);stroke-width:2.5;fill:none;stroke-dasharray:20;stroke-dashoffset:20;animation:drawCheck .3s ease .35s forwards}
+@keyframes drawCircle{to{stroke-dashoffset:0}}
+@keyframes drawCheck{to{stroke-dashoffset:0}}
+
+/* ── GIMMICK 4: KEYBOARD SHORTCUT SHEET ── */
+#kbOverlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(3px);animation:fadeIn .15s ease}
+#kbOverlay.show{display:flex}
+@keyframes fadeIn{from{opacity:0}to{opacity:1}}
+.kb-modal{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px 28px;min-width:320px;max-width:420px;width:90%;box-shadow:0 24px 64px rgba(0,0,0,.2);animation:slideUp .2s cubic-bezier(.34,1.2,.64,1)}
+@keyframes slideUp{from{transform:translateY(16px);opacity:0}to{transform:translateY(0);opacity:1}}
+.kb-modal-title{font-family:"Bricolage Grotesque",sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:16px;display:flex;align-items:center;gap:8px}
+.kb-row{display:flex;align-items:center;justify-content:space-between;padding:7px 0;border-bottom:1px solid var(--border)}
+.kb-row:last-child{border-bottom:none}
+.kb-desc{font-size:12px;color:var(--text2);font-weight:500}
+.kb-keys{display:flex;gap:4px;align-items:center}
+.kb-close{margin-top:16px;width:100%;padding:8px;border-radius:8px;border:1px solid var(--border2);background:var(--surface2);font-family:"DM Sans",sans-serif;font-size:13px;font-weight:600;color:var(--text2);cursor:pointer;transition:all .15s}
+.kb-close:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
+.kb-hint{position:fixed;bottom:24px;right:24px;z-index:50;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:6px 10px;font-size:11px;color:var(--text3);display:flex;align-items:center;gap:5px;box-shadow:var(--shadow-sm);opacity:0;transition:opacity .3s;pointer-events:none}
+.kb-hint.show{opacity:1;pointer-events:auto}
+.kb-hint .kbd{font-size:10px}
+
+/* ── GIMMICK 5: LOADING TIPS ── */
+.load-tip{font-size:12px;color:var(--text2);max-width:280px;text-align:center;line-height:1.5;padding:8px 14px;background:var(--surface2);border-radius:8px;border:1px solid var(--border);opacity:0;transform:translateY(6px);transition:opacity .4s,transform .4s;margin-top:4px}
+.load-tip.show{opacity:1;transform:translateY(0)}
+.load-tip strong{color:var(--accent);font-weight:600}
+
+/* ── GIMMICK 6: KPI COUNT-UP ── */
+.kpi-val.counting{transition:none}
+
+
+/* ── GIMMICK 8: TAB SLIDE-IN ── */
+@keyframes panelIn{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+.panel.active.animate-in{animation:panelIn .18s ease forwards}
+
+.search-wrap{flex:1;min-width:200px}
+.search-wrap .search-input{width:100%}
+
+/* ── GIMMICK 10: COPY BUTTON POP ── */
+@keyframes copyPop{0%{transform:scale(1)}30%{transform:scale(1.18)}60%{transform:scale(0.94)}100%{transform:scale(1)}}
+.copy-table-btn.pop{animation:copyPop .3s cubic-bezier(.34,1.56,.64,1)}
+.copy-table-btn.copied-pop{border-color:var(--pos)!important;color:#0d9e75!important;background:var(--pos-lt)!important}
+
+
+/* ── EMPTY STATE ILLUSTRATIONS ── */
+.empty-state{gap:16px}
+.empty-icon{font-size:38px;opacity:.2}
+.empty-illus{opacity:1;flex-shrink:0}
+.empty-illus svg{display:block}
+
 </style>
 </head>
 <body>
@@ -644,6 +714,7 @@ button:focus:not(:focus-visible){outline:none}
   <div class="load-bar-wrap"><div class="load-bar"></div></div>
   <div class="load-sub">Initialising Python runtime</div>
   <div id="loadProgress">Loading Pyodide…</div>
+  <div class="load-tip" id="loadTip"></div>
 </div>
 
 <header>
@@ -652,6 +723,10 @@ button:focus:not(:focus-visible){outline:none}
     <div class="logo-name"><em>MFG - <span style="color:#FF7A01">INSE</span></em> Social Listening Lab</div>
   </div>
   <div style="display:flex;align-items:center;gap:10px">
+    <div id="moodWrap">
+      <div id="moodIndicator" title="">🤖</div>
+      <div id="moodTooltip">Waiting for data…</div>
+    </div>
     <div class="status-chip" id="statusPill">
       <span class="dot"></span><span id="statusText">Initialising…</span>
     </div>
@@ -661,6 +736,29 @@ button:focus:not(:focus-visible){outline:none}
 
 <!-- Toast notification container -->
 <div id="toast-container"></div>
+
+<!-- Confetti canvas (Gimmick 2) -->
+<canvas id="confettiCanvas"></canvas>
+
+
+<!-- Keyboard shortcut overlay (Gimmick 4) -->
+<div id="kbOverlay">
+  <div class="kb-modal">
+    <div class="kb-modal-title">⌨️ Keyboard Shortcuts</div>
+    <div class="kb-row"><span class="kb-desc">Overview tab</span><div class="kb-keys"><kbd class="kbd">1</kbd></div></div>
+    <div class="kb-row"><span class="kb-desc">Sentiment tab</span><div class="kb-keys"><kbd class="kbd">2</kbd></div></div>
+    <div class="kb-row"><span class="kb-desc">Brand Deep-Dive tab</span><div class="kb-keys"><kbd class="kbd">3</kbd></div></div>
+    <div class="kb-row"><span class="kb-desc">Campaign tab</span><div class="kb-keys"><kbd class="kbd">4</kbd></div></div>
+    <div class="kb-row"><span class="kb-desc">AI Analysis tab</span><div class="kb-keys"><kbd class="kbd">5</kbd></div></div>
+    <div class="kb-row"><span class="kb-desc">Toggle dark / light mode</span><div class="kb-keys"><kbd class="kbd">Alt</kbd><span style="font-size:10px;color:var(--text3)">+</span><kbd class="kbd">D</kbd></div></div>
+    <div class="kb-row"><span class="kb-desc">Show this cheat sheet</span><div class="kb-keys"><kbd class="kbd">?</kbd></div></div>
+    <div class="kb-row"><span class="kb-desc">Close overlay / modal</span><div class="kb-keys"><kbd class="kbd">Esc</kbd></div></div>
+    <button class="kb-close" onclick="document.getElementById('kbOverlay').classList.remove('show')">Close</button>
+  </div>
+</div>
+
+<!-- Keyboard hint nudge -->
+<div class="kb-hint" id="kbHint">Press <kbd class="kbd">?</kbd> for shortcuts</div>
 
 <!-- Scroll to top button -->
 <button id="scrollTopBtn" title="Scroll to top">↑</button>
@@ -682,6 +780,7 @@ button:focus:not(:focus-visible){outline:none}
         <input type="file" accept=".csv" id="fileInput">
         <div class="upload-icon">📂</div>
         <div class="upload-text"><strong>File 1</strong><br>Drop CSV or click to browse</div>
+        <div class="check-draw"><svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="11"/><path d="M9 14.5l3.5 3.5 6.5-7"/></svg></div>
       </div>
       <div class="file-badge" id="fileBadge"></div>
       <button class="file-clear-btn" id="clearFile1" title="Remove file 1">✕ Remove file</button>
@@ -694,6 +793,7 @@ button:focus:not(:focus-visible){outline:none}
         <input type="file" accept=".csv" id="fileInput2">
         <div class="upload-icon">📂</div>
         <div class="upload-text"><strong>File 2</strong> <span style="font-weight:400">(optional)</span><br>Drop CSV or click to browse</div>
+        <div class="check-draw"><svg viewBox="0 0 28 28"><circle cx="14" cy="14" r="11"/><path d="M9 14.5l3.5 3.5 6.5-7"/></svg></div>
       </div>
       <div class="file-badge" id="fileBadge2"></div>
       <button class="file-clear-btn" id="clearFile2" title="Remove file 2">✕ Remove file 2</button>
@@ -764,7 +864,16 @@ button:focus:not(:focus-visible){outline:none}
       <!-- ═══ REPORT ═══ -->
       <div class="panel active" id="panel-report">
         <div class="empty-state" id="reportEmpty">
-          <div class="empty-icon">📋</div>
+          <div class="empty-illus"><svg width="80" height="68" viewBox="0 0 80 68" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="8" y="32" width="14" height="28" rx="3" fill="var(--accent)" opacity=".18"/>
+  <rect x="28" y="20" width="14" height="40" rx="3" fill="var(--accent)" opacity=".28"/>
+  <rect x="48" y="10" width="14" height="50" rx="3" fill="var(--accent)" opacity=".18"/>
+  <rect x="68" y="38" width="14" height="22" rx="3" fill="var(--accent)" opacity=".12"/>
+  <line x1="4" y1="62" x2="84" y2="62" stroke="var(--border2)" stroke-width="1.5" stroke-linecap="round"/>
+  <text x="50" y="14" font-size="10" fill="var(--text3)" opacity=".55" font-family="system-ui,sans-serif" font-weight="600">z</text>
+  <text x="58" y="7" font-size="8" fill="var(--text3)" opacity=".4" font-family="system-ui,sans-serif" font-weight="600">z</text>
+  <text x="64" y="2" font-size="6" fill="var(--text3)" opacity=".28" font-family="system-ui,sans-serif" font-weight="600">z</text>
+</svg></div>
           <div class="empty-title">No report yet</div>
           <div class="empty-sub">Upload a CSV — the pipeline runs automatically</div>
         </div>
@@ -817,7 +926,11 @@ button:focus:not(:focus-visible){outline:none}
       <!-- ═══ GOOGLE REVIEW ═══ -->
       <div class="panel" id="panel-greview">
         <div class="empty-state" id="greviewEmpty">
-          <div class="empty-icon">⭐</div>
+          <div class="empty-illus"><svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M36 8l5.5 11.2 12.4 1.8-9 8.7 2.1 12.3L36 36.4l-11 5.6 2.1-12.3-9-8.7 12.4-1.8z" fill="var(--accent)" opacity=".15" stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round" opacity=".35"/>
+  <circle cx="50" cy="52" r="13" fill="var(--surface)" stroke="var(--border2)" stroke-width="1.5"/>
+  <text x="50" y="57" font-size="13" fill="var(--text3)" opacity=".7" font-family="system-ui,sans-serif" font-weight="700" text-anchor="middle">?</text>
+</svg></div>
           <div class="empty-title">No Google Reviews found</div>
           <div class="empty-sub">Upload a CSV containing rows where the <strong>source</strong> column includes "googlereviews"</div>
         </div>
@@ -1086,7 +1199,13 @@ button:focus:not(:focus-visible){outline:none}
             <!-- ═══ CAMPAIGN ═══ -->
       <div class="panel" id="panel-campaign">
         <div class="empty-state" id="campaignEmpty">
-          <div class="empty-icon">🎯</div>
+          <div class="empty-illus"><svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <circle cx="36" cy="36" r="28" stroke="var(--text3)" stroke-width="1.5" opacity=".2"/>
+  <circle cx="36" cy="36" r="18" stroke="var(--text3)" stroke-width="1.5" opacity=".25"/>
+  <circle cx="36" cy="36" r="8" fill="var(--accent)" opacity=".2" stroke="var(--accent)" stroke-width="1.5" opacity=".4"/>
+  <line x1="56" y1="16" x2="44" y2="28" stroke="var(--text3)" stroke-width="2" stroke-linecap="round" opacity=".3"/>
+  <polyline points="54,16 56,16 56,18" stroke="var(--text3)" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" opacity=".3"/>
+</svg></div>
           <div class="empty-title">No campaign data found</div>
           <div class="empty-sub">Upload a CSV with a <strong>Campaign</strong> column containing comma-separated values like <code>[campaign_a, campaign_b]</code></div>
         </div>
@@ -1110,7 +1229,18 @@ button:focus:not(:focus-visible){outline:none}
 
             <!-- No-selection placeholder -->
             <div id="campSelectPrompt" class="empty-state" style="padding:48px 20px">
-              <div class="empty-icon">🎯</div>
+              <div class="empty-illus"><svg width="72" height="60" viewBox="0 0 72 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="4" y="4" width="24" height="13" rx="6.5" fill="var(--accent)" opacity=".15" stroke="var(--accent)" stroke-width="1.2" opacity=".3"/>
+  <rect x="32" y="4" width="18" height="13" rx="6.5" fill="var(--text3)" opacity=".1" stroke="var(--border2)" stroke-width="1.2"/>
+  <rect x="54" y="4" width="14" height="13" rx="6.5" fill="var(--text3)" opacity=".1" stroke="var(--border2)" stroke-width="1.2"/>
+  <path d="M36 44 L36 26" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round" opacity=".35"/>
+  <path d="M30 32 L36 26 L42 32" stroke="var(--text3)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" opacity=".35"/>
+  <circle cx="36" cy="52" r="5" fill="var(--text3)" opacity=".12" stroke="var(--text3)" stroke-width="1.2" opacity=".25"/>
+  <line x1="34" y1="50" x2="34" y2="54" stroke="var(--text3)" stroke-width="1.5" stroke-linecap="round" opacity=".4"/>
+  <line x1="38" y1="50" x2="38" y2="54" stroke="var(--text3)" stroke-width="1.5" stroke-linecap="round" opacity=".4"/>
+  <line x1="33" y1="54" x2="33" y2="57" stroke="var(--text3)" stroke-width="1.5" stroke-linecap="round" opacity=".4"/>
+  <line x1="39" y1="54" x2="39" y2="57" stroke="var(--text3)" stroke-width="1.5" stroke-linecap="round" opacity=".4"/>
+</svg></div>
               <div class="empty-title">Pick a campaign above</div>
               <div class="empty-sub">Select a campaign to see its engagement, mentions, sentiment and top posts</div>
             </div>
@@ -1338,7 +1468,13 @@ button:focus:not(:focus-visible){outline:none}
       <!-- ═══ CHARTS ═══ -->
       <div class="panel" id="panel-charts">
         <div class="empty-state" id="chartsEmpty">
-          <div class="empty-icon">📊</div><div class="empty-title">No data loaded</div>
+          <div class="empty-illus"><svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M36 10 A26 26 0 0 1 62 36" stroke="var(--accent)" stroke-width="10" stroke-linecap="round" opacity=".35"/>
+  <path d="M62 36 A26 26 0 0 1 23 59" stroke="var(--pos)" stroke-width="10" stroke-linecap="round" opacity=".3"/>
+  <path d="M23 59 A26 26 0 0 1 36 10" stroke="var(--neg)" stroke-width="10" stroke-linecap="round" opacity=".2"/>
+  <circle cx="36" cy="36" r="13" fill="var(--surface2)"/>
+  <text x="36" y="40" font-size="11" fill="var(--text3)" opacity=".45" font-family="system-ui,sans-serif" font-weight="600" text-anchor="middle">–</text>
+</svg></div><div class="empty-title">No data loaded</div>
           <div class="empty-sub">Upload a CSV to see sentiment charts</div>
         </div>
         <div id="chartsGrid" style="display:none">
@@ -1373,7 +1509,19 @@ button:focus:not(:focus-visible){outline:none}
       <!-- ═══ TABLE ═══ -->
       <div class="panel" id="panel-table">
         <div class="empty-state" id="tableEmpty">
-          <div class="empty-icon" id="tableEmptyIcon">🗂</div>
+          <div class="empty-illus"><svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="8" y="10" width="56" height="44" rx="5" fill="var(--surface2)" stroke="var(--border2)" stroke-width="1.5"/>
+  <line x1="8" y1="22" x2="64" y2="22" stroke="var(--border2)" stroke-width="1.2"/>
+  <line x1="8" y1="33" x2="64" y2="33" stroke="var(--border2)" stroke-width="1.2"/>
+  <line x1="8" y1="44" x2="64" y2="44" stroke="var(--border2)" stroke-width="1.2"/>
+  <line x1="28" y1="10" x2="28" y2="54" stroke="var(--border2)" stroke-width="1.2"/>
+  <line x1="48" y1="10" x2="48" y2="54" stroke="var(--border2)" stroke-width="1.2"/>
+  <rect x="13" y="14" width="10" height="4" rx="2" fill="var(--text3)" opacity=".18"/>
+  <rect x="32" y="14" width="10" height="4" rx="2" fill="var(--text3)" opacity=".12"/>
+  <circle cx="50" cy="48" r="11" fill="var(--surface)" stroke="var(--accent)" stroke-width="2" opacity=".5"/>
+  <circle cx="50" cy="48" r="6" stroke="var(--accent)" stroke-width="1.8" opacity=".5" fill="none"/>
+  <line x1="54.5" y1="52.5" x2="58" y2="56" stroke="var(--accent)" stroke-width="2" stroke-linecap="round" opacity=".6"/>
+</svg></div>
           <div class="empty-title" id="tableEmptyTitle">No data loaded</div>
           <div class="empty-sub" id="tableEmptySub">Upload a CSV to browse individual rows</div>
         </div>
@@ -1384,7 +1532,7 @@ button:focus:not(:focus-visible){outline:none}
               <div class="brand-pills" id="brandFilter"></div>
             </div>
             <div class="table-controls">
-              <input class="search-input" id="tableSearch" placeholder="Search text, brand, source… (or press / to focus)">
+              <div class="search-wrap"><input class="search-input" id="tableSearch" placeholder="Search text, brand, source… (or press / to focus)"></div>
               <div class="col-toggle" id="colToggle"></div>
               <span id="tableRowCount" style="font-size:11px;font-weight:600;color:var(--text3);white-space:nowrap;margin-left:auto"></span>
               <button class="btn-outline" id="tableExportFilteredBtn" title="Export currently filtered rows as CSV" style="white-space:nowrap;flex-shrink:0">⬇ Export</button>
@@ -1406,7 +1554,23 @@ button:focus:not(:focus-visible){outline:none}
       <!-- ═══ OVERVIEW ═══ -->
       <div class="panel" id="panel-overview">
         <div class="empty-state" id="overviewEmpty">
-          <div class="empty-icon">🔭</div>
+          <div class="empty-illus"><svg width="80" height="64" viewBox="0 0 80 64" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect x="20" y="4" width="16" height="8" rx="3" fill="var(--accent)" opacity=".18"/>
+  <rect x="40" y="4" width="16" height="8" rx="3" fill="var(--accent)" opacity=".14"/>
+  <rect x="60" y="4" width="16" height="8" rx="3" fill="var(--accent)" opacity=".1"/>
+  <rect x="2" y="18" width="14" height="8" rx="3" fill="var(--text3)" opacity=".12"/>
+  <rect x="2" y="32" width="14" height="8" rx="3" fill="var(--text3)" opacity=".12"/>
+  <rect x="2" y="46" width="14" height="8" rx="3" fill="var(--text3)" opacity=".12"/>
+  <rect x="20" y="18" width="16" height="8" rx="3" stroke="var(--border2)" stroke-width="1.2" stroke-dasharray="3 2"/>
+  <rect x="40" y="18" width="16" height="8" rx="3" stroke="var(--border2)" stroke-width="1.2" stroke-dasharray="3 2"/>
+  <rect x="60" y="18" width="16" height="8" rx="3" stroke="var(--border2)" stroke-width="1.2" stroke-dasharray="3 2"/>
+  <rect x="20" y="32" width="16" height="8" rx="3" stroke="var(--border2)" stroke-width="1.2" stroke-dasharray="3 2"/>
+  <rect x="40" y="32" width="16" height="8" rx="3" stroke="var(--border2)" stroke-width="1.2" stroke-dasharray="3 2"/>
+  <rect x="60" y="32" width="16" height="8" rx="3" stroke="var(--border2)" stroke-width="1.2" stroke-dasharray="3 2"/>
+  <rect x="20" y="46" width="16" height="8" rx="3" stroke="var(--border2)" stroke-width="1.2" stroke-dasharray="3 2"/>
+  <rect x="40" y="46" width="16" height="8" rx="3" stroke="var(--border2)" stroke-width="1.2" stroke-dasharray="3 2"/>
+  <rect x="60" y="46" width="16" height="8" rx="3" stroke="var(--border2)" stroke-width="1.2" stroke-dasharray="3 2"/>
+</svg></div>
           <div class="empty-title">No data loaded</div>
           <div class="empty-sub">Upload a CSV to see the channel overview matrix</div>
         </div>
@@ -1462,7 +1626,15 @@ button:focus:not(:focus-visible){outline:none}
       <!-- ═══ BRAND DEEP-DIVE ═══ -->
       <div class="panel" id="panel-brand">
         <div class="empty-state" id="bddEmpty">
-          <div class="empty-icon">🏷</div>
+          <div class="empty-illus"><svg width="72" height="72" viewBox="0 0 72 72" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <path d="M10 10 H38 L62 34 L38 58 L10 58 Z" fill="var(--accent)" opacity=".1" stroke="var(--accent)" stroke-width="1.5" stroke-linejoin="round" opacity=".3"/>
+  <circle cx="22" cy="26" r="4" fill="var(--accent)" opacity=".25"/>
+  <line x1="30" y1="34" x2="50" y2="34" stroke="var(--text3)" stroke-width="1.5" stroke-linecap="round" opacity=".25"/>
+  <line x1="30" y1="40" x2="44" y2="40" stroke="var(--text3)" stroke-width="1.5" stroke-linecap="round" opacity=".18"/>
+  <circle cx="54" cy="56" r="10" fill="var(--surface)" stroke="var(--text3)" stroke-width="1.5" opacity=".3"/>
+  <circle cx="54" cy="56" r="5.5" stroke="var(--text3)" stroke-width="1.5" opacity=".35" fill="none"/>
+  <line x1="58" y1="60" x2="61" y2="63" stroke="var(--text3)" stroke-width="2" stroke-linecap="round" opacity=".4"/>
+</svg></div>
           <div class="empty-title">No data loaded</div>
           <div class="empty-sub">Upload a CSV first, then select a brand to explore its full social listening profile</div>
         </div>
@@ -1890,7 +2062,8 @@ function setupUploadZone(zoneId, inputId, slot) {
     e.preventDefault(); uz.classList.remove('drag-over','drag-active');
     const f = e.dataTransfer.files[0];
     if (!f) return;
-    if (!f.name.endsWith('.csv')) {
+    const isCSV = f.name.toLowerCase().endsWith('.csv') || f.type === 'text/csv' || f.type === 'application/vnd.ms-excel';
+    if (!isCSV) {
       showToast('Only CSV files are supported', 'error');
       return;
     }
@@ -1900,7 +2073,12 @@ function setupUploadZone(zoneId, inputId, slot) {
 setupUploadZone('uploadZone',  'fileInput',  1);
 setupUploadZone('uploadZone2', 'fileInput2', 2);
 
+const MAX_FILE_SIZE_MB = 50;
 function registerFile(file, slot) {
+  if (file.size > MAX_FILE_SIZE_MB * 1024 * 1024) {
+    showToast(`File is too large — maximum size is ${MAX_FILE_SIZE_MB} MB`, 'error');
+    return;
+  }
   if (slot === 1) {
     csvFile1 = file;
     document.getElementById('fileBadge').textContent = `✔ ${file.name}\n${(file.size/1024).toFixed(0)} KB`;
@@ -1921,6 +2099,15 @@ function registerFile(file, slot) {
 }
 
 // ── FILE CLEAR HANDLERS ───────────────────────────────────────────────────────
+function _doClearFile2() {
+  csvFile2 = null;
+  document.getElementById('fileBadge2').textContent = '';
+  document.getElementById('fileBadge2').classList.remove('show');
+  document.getElementById('fileInput2').value = '';
+  document.getElementById('clearFile2').classList.remove('show');
+  document.getElementById('uploadZone2').classList.remove('has-file');
+}
+
 document.getElementById('clearFile1').addEventListener('click', () => {
   csvFile1 = null;
   document.getElementById('fileBadge').textContent = '';
@@ -1928,17 +2115,11 @@ document.getElementById('clearFile1').addEventListener('click', () => {
   document.getElementById('fileInput').value = '';
   document.getElementById('clearFile1').classList.remove('show');
   document.getElementById('uploadZone2').style.opacity = '0.55';
-  // Also clear file 2 if present since file 1 is required
-  if (csvFile2) document.getElementById('clearFile2').click();
+  if (csvFile2) { _doClearFile2(); showToast('File 2 removed', 'info'); }
   showToast('File 1 removed', 'info');
 });
 document.getElementById('clearFile2').addEventListener('click', () => {
-  csvFile2 = null;
-  document.getElementById('fileBadge2').textContent = '';
-  document.getElementById('fileBadge2').classList.remove('show');
-  document.getElementById('fileInput2').value = '';
-  document.getElementById('clearFile2').classList.remove('show');
-  document.getElementById('uploadZone2').classList.remove('has-file');
+  _doClearFile2();
   showToast('File 2 removed', 'info');
 });
 
@@ -1990,7 +2171,7 @@ async function triggerPipeline() {
   filteredData=[...rawData]; renderCharts(); renderTable(); updateGooglePanel(); updateBrandDeepDive(); renderOverview();
   setStatus('ready', totalLabel);
   _hidePipelineOverlay();
-  showToast(`✅ Pipeline complete — ${totalLabel}`, 'success', 4000);
+  showToast(`Pipeline complete — ${totalLabel}`, 'success', 4000);
 }
 
 function parseCSV(text) {
@@ -3825,7 +4006,11 @@ function renderTable(){
 }
 document.getElementById('prevPage').addEventListener('click',()=>{currentPage--;renderTable();});
 document.getElementById('nextPage').addEventListener('click',()=>{currentPage++;renderTable();});
-document.getElementById('tableSearch').addEventListener('input',applyFilters);
+let _searchDebounceTimer = null;
+document.getElementById('tableSearch').addEventListener('input', () => {
+  clearTimeout(_searchDebounceTimer);
+  _searchDebounceTimer = setTimeout(applyFilters, 250);
+});
 
 // "/" key to focus table search when Data Table tab is active
 document.addEventListener('keydown', e => {
@@ -4983,9 +5168,10 @@ function renderAiMarkdown(text) {
     // indicate it is an inline bold phrase inside a sentence.
     if (/^\*\*[^\*].{2,}\*\*$/.test(trimmed) && !/[.!?]$/.test(trimmed.replace(/\*\*/g,''))) {
       if (inSection) html += '</div>'; // close previous section body
-      const title = trimmed.replace(/\*\*/g, '').trim();
-      sectionKey = title.toUpperCase();  // normalise for icon lookup
-      const icon = AI_SECTION_ICONS[sectionKey] || AI_SECTION_ICONS[title] || '▸';
+      const rawTitle = trimmed.replace(/\*\*/g, '').trim();
+      sectionKey = rawTitle.toUpperCase();  // normalise for icon lookup
+      const icon = AI_SECTION_ICONS[sectionKey] || AI_SECTION_ICONS[rawTitle] || '▸';
+      const title = escapeHtml(rawTitle);
       html += `
         <div class="ai-section">
           <div class="ai-section-title">
@@ -5049,7 +5235,7 @@ function renderAiMarkdown(text) {
 }
 
 function renderInline(text) {
-  return text
+  return escapeHtml(text)
     // **bold**
     .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     // Inline sentiment labels [positive] [negative] [neutral]
@@ -6272,8 +6458,10 @@ Output only the four sections as instructed. No introduction. No conclusion. Sta
 }
 
 // ── SHARED GEMINI STREAMING RUNNER ────────────────────────────────────────────
+const _ALLOWED_AI_MODELS = new Set(AI_MODELS.gemini.map(m => m.value));
 async function _runGeminiStream({ model, system, user, outputBody, onDone, onError }) {
-  const url = `https://generativelanguage.googleapis.com/v1beta/models/${model}:streamGenerateContent?key=${geminiApiKey}&alt=sse`;
+  const safeModel = _ALLOWED_AI_MODELS.has(model) ? model : AI_MODELS.gemini[0].value;
+  const url = `https://generativelanguage.googleapis.com/v1beta/models/${safeModel}:streamGenerateContent?key=${geminiApiKey}&alt=sse`;
   try {
     const response = await fetch(url, {
       method: 'POST',
@@ -6295,7 +6483,7 @@ async function _runGeminiStream({ model, system, user, outputBody, onDone, onErr
       }
       throw new Error(msg);
     }
-    let fullText='', buffer='';
+    let fullText='', buffer='', _renderPending=false;
     outputBody.innerHTML='';
     const reader=response.body.getReader(), decoder=new TextDecoder();
     while (true) {
@@ -6308,7 +6496,17 @@ async function _runGeminiStream({ model, system, user, outputBody, onDone, onErr
         try {
           const evt = JSON.parse(data);
           const chunk = evt?.candidates?.[0]?.content?.parts?.[0]?.text;
-          if (chunk) { fullText+=chunk; outputBody.innerHTML=renderAiMarkdown(fullText)+'<span class="ai-cursor"></span>'; outputBody.scrollTop=outputBody.scrollHeight; }
+          if (chunk) {
+            fullText += chunk;
+            if (!_renderPending) {
+              _renderPending = true;
+              requestAnimationFrame(() => {
+                outputBody.innerHTML = renderAiMarkdown(fullText) + '<span class="ai-cursor"></span>';
+                outputBody.scrollTop = outputBody.scrollHeight;
+                _renderPending = false;
+              });
+            }
+          }
         } catch(_) {}
       }
     }
@@ -6876,6 +7074,248 @@ initPyodide().catch(err=>{
   const str = `${days[d.getDay()]}, ${String(d.getDate()).padStart(2,'0')} ${months[d.getMonth()]} ${d.getFullYear()}`;
   document.getElementById('sidebarDate').textContent = str;
 })();
+
+// ══════════════════════════════════════════════════════════════════════════════
+// GIMMICKS · UNIFIED HOOK SYSTEM
+// All renderTable / renderCharts patches consolidated here so they wrap once,
+// not in a chain. No MutationObservers on frequently-updating elements.
+// ══════════════════════════════════════════════════════════════════════════════
+(function() {
+
+  // ── Shared state ───────────────────────────────────────────────────────────
+  let kbHintShown = false;
+
+  // ── Single renderCharts wrapper (Gimmick 1 mood only) ─────────────────────
+  const _baseRenderCharts = renderCharts;
+  renderCharts = function(...args) {
+    const r = _baseRenderCharts.apply(this, args);
+    _updateMood();
+    return r;
+  };
+
+  // ── Single renderTable wrapper (Gimmicks 4 hint + 9 badge) ────────────────
+  const _baseRenderTable = renderTable;
+  renderTable = function(...args) {
+    const r = _baseRenderTable.apply(this, args);
+    // Gimmick 4: show shortcut hint once after first successful render
+    if (!kbHintShown) {
+      kbHintShown = true;
+      setTimeout(() => {
+        const hint = document.getElementById('kbHint');
+        if (hint) {
+          hint.classList.add('show');
+          setTimeout(() => hint.classList.remove('show'), 5000);
+        }
+      }, 1200);
+    }
+    // Gimmick 6: count-up KPIs after each render
+    _countUpKpis();
+    return r;
+  };
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // GIMMICK 1 · MASCOT MOOD INDICATOR
+  // ══════════════════════════════════════════════════════════════════════════
+  function _updateMood() {
+    const el  = document.getElementById('moodIndicator');
+    const tip = document.getElementById('moodTooltip');
+    if (!el) return;
+    const pool = (allRawData && allRawData.length) ? allRawData : (rawData || []);
+    if (!pool.length) { el.textContent = '🤖'; if (tip) tip.textContent = 'Waiting for data…'; return; }
+    let pos = 0, neg = 0, neu = 0;
+    pool.forEach(r => {
+      const s = String(r.sentiment || '').toLowerCase().trim();
+      if (s === 'positive') pos++; else if (s === 'negative') neg++; else neu++;
+    });
+    const total = pos + neg + neu || 1;
+    const pp = pos / total * 100, np = neg / total * 100;
+    let emoji, msg;
+    if      (pp >= 65) { emoji='😊'; msg=`Vibes are great — ${pp.toFixed(0)}% positive`; }
+    else if (pp >= 45) { emoji='🙂'; msg=`Mostly positive — ${pp.toFixed(0)}% positive`; }
+    else if (np >= 50) { emoji='😤'; msg=`Rough patch — ${np.toFixed(0)}% negative`; }
+    else if (np >= 35) { emoji='😕'; msg=`Some negativity — ${np.toFixed(0)}% negative`; }
+    else               { emoji='😐'; msg=`Mixed bag — ${neu} neutral posts`; }
+    if (el.textContent !== emoji) {
+      el.textContent = emoji;
+      el.classList.remove('bump'); void el.offsetWidth; el.classList.add('bump');
+    }
+    if (tip) tip.textContent = msg;
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // GIMMICK 2 · CONFETTI BURST
+  // ══════════════════════════════════════════════════════════════════════════
+  const _confettiCanvas = document.getElementById('confettiCanvas');
+  const _ctx = _confettiCanvas ? _confettiCanvas.getContext('2d') : null;
+  const _COLORS = ['#2563EB','#1DC997','#F59E0B','#EF4444','#7c3aed','#FF7A01'];
+  let _confettiRaf = null;
+
+  function launchConfetti() {
+    if (!_ctx) return;
+    _confettiCanvas.width  = window.innerWidth;
+    _confettiCanvas.height = window.innerHeight;
+    _confettiCanvas.style.display = 'block';
+    const pts = Array.from({length:80}, () => ({
+      x: Math.random() * _confettiCanvas.width, y: -10 - Math.random()*40,
+      vx: (Math.random()-.5)*3, vy: 2+Math.random()*4, r: 4+Math.random()*5,
+      color: _COLORS[Math.floor(Math.random()*_COLORS.length)],
+      rot: Math.random()*Math.PI*2, rotV: (Math.random()-.5)*.2,
+      rect: Math.random()>.5
+    }));
+    if (_confettiRaf) cancelAnimationFrame(_confettiRaf);
+    let life = 0;
+    function draw() {
+      _ctx.clearRect(0,0,_confettiCanvas.width,_confettiCanvas.height);
+      life++;
+      pts.forEach(p => {
+        p.x+=p.vx; p.y+=p.vy; p.vy+=.08; p.rot+=p.rotV;
+        _ctx.save(); _ctx.globalAlpha=Math.max(0,1-life/90);
+        _ctx.fillStyle=p.color; _ctx.translate(p.x,p.y); _ctx.rotate(p.rot);
+        if (p.rect) _ctx.fillRect(-p.r,-p.r/2,p.r*2,p.r);
+        else { _ctx.beginPath(); _ctx.arc(0,0,p.r/2,0,Math.PI*2); _ctx.fill(); }
+        _ctx.restore();
+      });
+      if (life<100) _confettiRaf=requestAnimationFrame(draw);
+      else { _confettiCanvas.style.display='none'; _ctx.clearRect(0,0,_confettiCanvas.width,_confettiCanvas.height); }
+    }
+    draw();
+  }
+  window.launchConfetti = launchConfetti;
+
+  // Patch _runGeminiStream once to fire confetti on completion
+  if (typeof _runGeminiStream === 'function') {
+    const _baseGemini = _runGeminiStream;
+    _runGeminiStream = async function(opts) {
+      const orig = opts.onDone;
+      opts.onDone = function(t) { launchConfetti(); if (orig) orig(t); };
+      return _baseGemini.call(this, opts);
+    };
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // GIMMICK 3 · ANIMATED FILE DROP ZONE
+  // ══════════════════════════════════════════════════════════════════════════
+  ['uploadZone','uploadZone2'].forEach(id => {
+    const zone = document.getElementById(id);
+    if (!zone) return;
+    const icon = zone.querySelector('.upload-icon');
+    zone.addEventListener('dragenter', () => { if(icon) icon.textContent='📬'; });
+    zone.addEventListener('dragleave', e => { if(!zone.contains(e.relatedTarget) && icon) icon.textContent='📂'; });
+    zone.addEventListener('drop', () => { if(icon) icon.textContent='📂'; });
+  });
+
+  if (typeof registerFile === 'function') {
+    const _baseReg = registerFile;
+    registerFile = function(file, slot) {
+      const r = _baseReg.call(this, file, slot);
+      const zone = document.getElementById(slot===1?'uploadZone':'uploadZone2');
+      if (zone) {
+        zone.classList.add('file-success');
+        const icon = zone.querySelector('.upload-icon');
+        if (icon) icon.textContent = '✅';
+        setTimeout(() => { zone.classList.remove('file-success'); if(icon) icon.textContent='📂'; }, 1800);
+      }
+      return r;
+    };
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // GIMMICK 4 · KEYBOARD SHORTCUT CHEAT SHEET (handled via renderTable hook above)
+  // ══════════════════════════════════════════════════════════════════════════
+  const _overlay = document.getElementById('kbOverlay');
+  if (_overlay) {
+    document.addEventListener('keydown', e => {
+      const tag = document.activeElement.tagName;
+      if (tag==='INPUT'||tag==='TEXTAREA'||tag==='SELECT') return;
+      if (e.key==='?'||e.key==='/') { e.preventDefault(); _overlay.classList.toggle('show'); }
+      if (e.key==='Escape') _overlay.classList.remove('show');
+    });
+    _overlay.addEventListener('click', e => { if(e.target===_overlay) _overlay.classList.remove('show'); });
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // GIMMICK 5 · ROTATING LOADING TIPS
+  // ══════════════════════════════════════════════════════════════════════════
+  const _tips = [
+    '💡 <strong>Tip:</strong> Upload a second CSV with <strong>File 2</strong> to merge two months at once.',
+    '🔍 <strong>Tip:</strong> Press <strong>?</strong> anytime to see all keyboard shortcuts.',
+    '🌙 <strong>Tip:</strong> Hit <strong>Alt + D</strong> to toggle dark mode.',
+    '📊 <strong>Tip:</strong> Brand Deep-Dive gives per-brand sentiment breakdowns and top posts.',
+    '✦ <strong>Tip:</strong> AI Analysis has three modes — Sentiment, Content Themes, and Performance.',
+    '🏷️ <strong>Tip:</strong> Click any brand pill in the sidebar to filter every chart instantly.',
+    '📋 <strong>Tip:</strong> Every table has a <strong>Copy</strong> button — paste straight into your deck.',
+    '🔗 <strong>Tip:</strong> Campaign tab lets you compare performance across multiple campaigns.',
+  ];
+  const _tipEl = document.getElementById('loadTip');
+  if (_tipEl) {
+    let _tipIdx = Math.floor(Math.random() * _tips.length);
+    _tipEl.innerHTML = _tips[_tipIdx];
+    setTimeout(() => _tipEl.classList.add('show'), 600);
+    const _tipInterval = setInterval(() => {
+      _tipEl.classList.remove('show');
+      setTimeout(() => { _tipIdx=(_tipIdx+1)%_tips.length; _tipEl.innerHTML=_tips[_tipIdx]; _tipEl.classList.add('show'); }, 400);
+    }, 3500);
+    const _loadObs = new MutationObserver(() => {
+      if (document.getElementById('loadingScreen')?.classList.contains('done')) { clearInterval(_tipInterval); _loadObs.disconnect(); }
+    });
+    _loadObs.observe(document.getElementById('loadingScreen'), { attributes:true, attributeFilter:['class'] });
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // GIMMICK 6 · KPI COUNT-UP (triggered from renderTable hook, NOT MutationObserver)
+  // ══════════════════════════════════════════════════════════════════════════
+  // Snapshot values BEFORE animation so count-up doesn't re-trigger itself
+  const _kpiTargets = {};
+  function _countUpKpis() {
+    ['rTotalEng','rTotalMention','rPosPct','rNegPct'].forEach(id => {
+      const el = document.getElementById(id);
+      if (!el) return;
+      const val = el.textContent.trim();
+      if (!val || val==='—' || val===_kpiTargets[id]) return; // skip if unchanged
+      _kpiTargets[id] = val; // record target so we don't re-animate same value
+      _animateKpi(el, val, 750);
+    });
+  }
+  function _animateKpi(el, targetStr, dur) {
+    const num = parseFloat(targetStr.replace(/,/g,''));
+    const isPct = targetStr.includes('%'), isPlus = targetStr.startsWith('+');
+    if (isNaN(num)) return;
+    const t0 = performance.now();
+    function step(now) {
+      const p = Math.min((now-t0)/dur, 1);
+      const ease = 1-Math.pow(1-p,3);
+      el.textContent = (isPlus?'+':'') + Math.round(num*ease).toLocaleString() + (isPct?'%':'');
+      if (p<1) requestAnimationFrame(step); else el.textContent = targetStr;
+    }
+    requestAnimationFrame(step);
+  }
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // GIMMICK 8 · SMOOTH TAB SLIDE-IN
+  // ══════════════════════════════════════════════════════════════════════════
+  document.querySelectorAll('.tab-btn').forEach(btn => {
+    btn.addEventListener('click', () => {
+      requestAnimationFrame(() => {
+        const panel = document.getElementById('panel-'+btn.dataset.tab);
+        if (!panel) return;
+        panel.classList.remove('animate-in'); void panel.offsetWidth;
+        panel.classList.add('animate-in');
+        panel.addEventListener('animationend', () => panel.classList.remove('animate-in'), {once:true});
+      });
+    });
+  });
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // GIMMICK 10 · COPY BUTTON POP — pure event delegation, no function wrapping
+  // ══════════════════════════════════════════════════════════════════════════
+  document.addEventListener('click', e => {
+    const btn = e.target.closest('.copy-table-btn, .clear-btn');
+    if (!btn) return;
+    btn.classList.remove('pop'); void btn.offsetWidth;
+    btn.classList.add('pop');
+    btn.addEventListener('animationend', () => btn.classList.remove('pop'), {once:true});
+  });
+})(); // end unified gimmick IIFE
 
 </script>
 </body>
