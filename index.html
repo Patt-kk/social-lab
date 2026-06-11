@@ -612,13 +612,35 @@ table.dt tbody td{padding:9px 14px;font-size:12px;color:var(--text2);max-width:2
 .file-clear-btn.show{display:block}
 
 /* ── LOADING OVERLAY FOR PIPELINE ── */
-#pipelineOverlay{position:fixed;inset:0;background:rgba(0,0,0,.35);z-index:400;display:none;align-items:center;justify-content:center;backdrop-filter:blur(2px)}
+#pipelineOverlay{position:fixed;inset:0;background:rgba(10,12,26,.6);z-index:400;display:none;align-items:center;justify-content:center;backdrop-filter:blur(6px)}
 #pipelineOverlay.show{display:flex}
-.pipeline-modal{background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:28px 32px;min-width:280px;text-align:center;box-shadow:0 20px 60px rgba(0,0,0,.2)}
-.pipeline-modal-title{font-family:"Bricolage Grotesque",sans-serif;font-size:16px;font-weight:700;color:var(--text);margin-bottom:6px}
-.pipeline-modal-sub{font-size:12px;color:var(--text3);margin-bottom:16px}
-.pipeline-modal-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden}
-.pipeline-modal-fill{height:100%;background:var(--accent);border-radius:2px;transition:width .4s ease;width:0%}
+.pipeline-modal{background:linear-gradient(145deg,var(--surface) 0%,var(--surface2) 100%);border:1px solid var(--border);border-radius:20px;padding:32px 36px;min-width:320px;max-width:380px;text-align:center;box-shadow:0 32px 80px rgba(0,0,0,.28),0 0 0 1px rgba(255,255,255,.06);position:relative;overflow:hidden}
+.pipeline-modal::before{content:'';position:absolute;top:-60px;left:50%;transform:translateX(-50%);width:240px;height:240px;background:radial-gradient(circle,rgba(37,99,235,.18) 0%,transparent 70%);pointer-events:none;animation:pmodalGlow 3s ease-in-out infinite alternate}
+@keyframes pmodalGlow{from{opacity:.6;transform:translateX(-50%) scale(1)}to{opacity:1;transform:translateX(-50%) scale(1.15)}}
+
+
+
+/* Dots row */
+.pipeline-dots{display:flex;justify-content:center;gap:7px;margin:18px 0 14px}
+.pipeline-dot{width:7px;height:7px;border-radius:50%;background:var(--accent);opacity:.25;animation:dotBounce 1.2s ease-in-out infinite}
+.pipeline-dot:nth-child(1){animation-delay:0s}
+.pipeline-dot:nth-child(2){animation-delay:.18s}
+.pipeline-dot:nth-child(3){animation-delay:.36s}
+.pipeline-dot:nth-child(4){animation-delay:.54s}
+.pipeline-dot:nth-child(5){animation-delay:.72s}
+@keyframes dotBounce{0%,80%,100%{transform:translateY(0);opacity:.25}40%{transform:translateY(-8px);opacity:1}}
+
+.pipeline-modal-title{font-family:"Bricolage Grotesque",sans-serif;font-size:18px;font-weight:800;color:var(--text);margin-bottom:5px;letter-spacing:-.3px}
+.pipeline-modal-sub{font-size:12px;color:var(--text3);margin-bottom:18px;min-height:18px;transition:opacity .3s}
+.pipeline-modal-bar{height:5px;background:var(--border);border-radius:3px;overflow:hidden;position:relative}
+.pipeline-modal-fill{height:100%;background:linear-gradient(90deg,var(--accent),#7c3aed,var(--pos));background-size:200% 100%;border-radius:3px;transition:width .4s ease;width:0%;animation:barShimmer 2s linear infinite}
+@keyframes barShimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
+
+/* Cute cat */
+.pipeline-cat{font-size:28px;margin-top:16px;animation:catWiggle 1.8s ease-in-out infinite;display:inline-block;cursor:default;user-select:none}
+@keyframes catWiggle{0%,100%{transform:rotate(-8deg) scale(1)}25%{transform:rotate(8deg) scale(1.08)}50%{transform:rotate(-5deg) scale(1)}75%{transform:rotate(6deg) scale(1.05)}}
+.pipeline-cat-msg{font-size:11px;color:var(--text3);margin-top:6px;font-weight:500;letter-spacing:.2px;animation:catMsgFade 2.4s ease-in-out infinite}
+@keyframes catMsgFade{0%,100%{opacity:.5}50%{opacity:1}}
 
 /* ── IMPROVED AI OUTPUT ── */
 .ai-output-export-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
@@ -774,6 +796,15 @@ textarea:focus{border-color:var(--accent)!important}
     <div class="pipeline-modal-title">Processing Data…</div>
     <div class="pipeline-modal-sub" id="pipelineOverlayStep">Initialising pipeline</div>
     <div class="pipeline-modal-bar"><div class="pipeline-modal-fill" id="pipelineOverlayFill"></div></div>
+    <div class="pipeline-dots">
+      <div class="pipeline-dot"></div>
+      <div class="pipeline-dot"></div>
+      <div class="pipeline-dot"></div>
+      <div class="pipeline-dot"></div>
+      <div class="pipeline-dot"></div>
+    </div>
+    <div class="pipeline-cat" id="pipelineCat">🐱</div>
+    <div class="pipeline-cat-msg" id="pipelineCatMsg">hang tight, almost there…</div>
   </div>
 </div>
 
@@ -1304,7 +1335,7 @@ textarea:focus{border-color:var(--accent)!important}
               </div>
 
               <!-- Row: Sentiment Distribution + Top Posts -->
-              <div style="display:grid;grid-template-columns:5fr 7fr;gap:14px;margin-bottom:14px;align-items:stretch">
+              <div style="display:grid;grid-template-columns:3fr 7fr;gap:14px;margin-bottom:14px;align-items:stretch">
                 <div class="card" style="margin-bottom:0">
                   <div class="bdd-section-title"><span>📊</span>Sentiment Distribution</div>
                   <div id="campSentDonut" style="height:100%;display:flex;flex-direction:column"></div>
@@ -3101,20 +3132,21 @@ function _renderCampSentDonut() {
 
   const canvas = document.createElement('canvas');
   canvas.width = SIZE; canvas.height = SIZE;
-  canvas.style.cssText = 'display:block;width:100%;max-width:280px;height:auto;margin:0 auto';
+  canvas.style.cssText = 'display:block;width:100%;height:auto;margin:0 auto';
 
   // ── Bottom panel: stacked bar + legend ──
   const bottomPanel = document.createElement('div');
   bottomPanel.style.cssText = 'display:flex;flex-direction:column;gap:12px;margin-top:4px';
 
-  const barSegs = segments.map(s => {
+  const barSegs = segments.map((s, i) => {
     const pct    = (s.val / total * 100);
     const pctStr = Math.round(pct) + '%';
-    // Only show inline label when segment is wide enough to hold it (>=8%)
-    const labelHtml = pct >= 8
-      ? `<span style="font-family:'DM Mono',monospace;font-size:11px;font-weight:800;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.35);white-space:nowrap">${pctStr}</span>`
-      : '';
-    return `<div class="camp-stk-seg" data-pct="${pct}" style="flex:0 0 0%;background:${s.color};display:flex;align-items:center;justify-content:center;overflow:hidden;transition:flex-basis .7s cubic-bezier(.16,1,.3,1)">
+    const isNarrow = pct < 5;
+    // Wide: label centered inside. Narrow: small callout floats above the bar.
+    const labelHtml = isNarrow
+      ? `<span style="font-family:'DM Mono',monospace;font-size:10px;font-weight:700;color:${s.color};white-space:nowrap;position:absolute;top:-22px;left:50%;transform:translateX(-50%);background:var(--surface);border:1px solid ${s.color}40;border-radius:4px;padding:1px 5px;z-index:20;pointer-events:none;box-shadow:0 1px 4px rgba(0,0,0,.08)">${pctStr}</span>`
+      : `<span style="font-family:'DM Mono',monospace;font-size:13px;font-weight:800;color:#fff;text-shadow:0 1px 3px rgba(0,0,0,.4);white-space:nowrap;position:absolute;left:50%;transform:translateX(-50%);z-index:10;pointer-events:none">${pctStr}</span>`;
+    return `<div class="camp-stk-seg" data-pct="${pct}" style="flex:0 0 0%;background:${s.color};display:flex;align-items:center;justify-content:center;overflow:visible;transition:flex-basis .7s cubic-bezier(.16,1,.3,1);position:relative;">
       ${labelHtml}
     </div>`;
   }).join('');
@@ -3128,7 +3160,9 @@ function _renderCampSentDonut() {
     </div>`).join('');
 
   bottomPanel.innerHTML = `
-    <div style="height:24px;border-radius:7px;overflow:hidden;display:flex;box-shadow:0 1px 3px rgba(0,0,0,.1)">${barSegs}</div>
+    <div style="height:36px;position:relative;margin-top:26px;">
+      <div style="position:absolute;inset:0;border-radius:7px;overflow:hidden;display:flex;box-shadow:0 1px 3px rgba(0,0,0,.1)">${barSegs}</div>
+    </div>
     <div style="display:flex;flex-direction:column;gap:0">${legendRows}</div>`;
 
   // ── Outer layout: donut on top, bar+legend below ──
@@ -7705,6 +7739,33 @@ initPyodide().catch(err=>{
     btn.addEventListener('animationend', () => btn.classList.remove('pop'), {once:true});
   });
 })(); // end unified gimmick IIFE
+
+// ── PIPELINE MODAL CUTE CAT — timer-based, changes every 0.3s ──
+(function() {
+  const cats = ['🐱','😺','😸','😹','🙀','😻','😼','🐾'];
+  const msgs = ['hang tight, almost there…','crunching numbers…','doing cat things…','please hold, meow…','almost done, pinky promise…','good things take time 🐾','nearly there…','wrapping up! 🐾'];
+  let catIdx = 0, msgIdx = 0, catInterval = null;
+  const catEl = document.getElementById('pipelineCat');
+  const msgEl = document.getElementById('pipelineCatMsg');
+  const overlay = document.getElementById('pipelineOverlay');
+  if (overlay && catEl) {
+    new MutationObserver(() => {
+      if (overlay.classList.contains('show')) {
+        catIdx = 0; msgIdx = 0;
+        catEl.textContent = cats[0];
+        if (msgEl) msgEl.textContent = msgs[0];
+        catInterval = setInterval(() => {
+          catIdx = (catIdx + 1) % cats.length;
+          msgIdx = (msgIdx + 1) % msgs.length;
+          catEl.textContent = cats[catIdx];
+          if (msgEl) msgEl.textContent = msgs[msgIdx];
+        }, 1);
+      } else {
+        clearInterval(catInterval);
+      }
+    }).observe(overlay, { attributes: true, attributeFilter: ['class'] });
+  }
+})();
 
 </script>
 </body>
