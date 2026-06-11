@@ -636,11 +636,17 @@ table.dt tbody td{padding:9px 14px;font-size:12px;color:var(--text2);max-width:2
 .pipeline-modal-fill{height:100%;background:linear-gradient(90deg,var(--accent),#7c3aed,var(--pos));background-size:200% 100%;border-radius:3px;transition:width .4s ease;width:0%;animation:barShimmer 2s linear infinite}
 @keyframes barShimmer{0%{background-position:100% 0}100%{background-position:-100% 0}}
 
-/* Cute cat */
-.pipeline-cat{font-size:28px;margin-top:16px;animation:catWiggle 1.8s ease-in-out infinite;display:inline-block;cursor:default;user-select:none}
-@keyframes catWiggle{0%,100%{transform:rotate(-8deg) scale(1)}25%{transform:rotate(8deg) scale(1.08)}50%{transform:rotate(-5deg) scale(1)}75%{transform:rotate(6deg) scale(1.05)}}
-.pipeline-cat-msg{font-size:11px;color:var(--text3);margin-top:6px;font-weight:500;letter-spacing:.2px;animation:catMsgFade 2.4s ease-in-out infinite}
-@keyframes catMsgFade{0%,100%{opacity:.5}50%{opacity:1}}
+/* Orb */
+.pipeline-orb{width:72px;height:72px;margin:0 auto 20px;position:relative}
+.pipeline-orb-ring{position:absolute;inset:0;border-radius:50%;border:2px solid transparent;animation:orbSpin 2s linear infinite}
+.pipeline-orb-ring:nth-child(1){border-top-color:var(--accent);border-right-color:rgba(37,99,235,.2);animation-duration:1.6s}
+.pipeline-orb-ring:nth-child(2){inset:8px;border-bottom-color:#7c3aed;border-left-color:rgba(124,58,237,.2);animation-duration:2.4s;animation-direction:reverse}
+.pipeline-orb-ring:nth-child(3){inset:16px;border-top-color:var(--pos);border-right-color:rgba(29,201,151,.2);animation-duration:3s}
+.pipeline-orb-core{position:absolute;inset:22px;border-radius:50%;background:linear-gradient(135deg,var(--accent),#7c3aed);box-shadow:0 0 20px rgba(37,99,235,.5);animation:orbPulse 2s ease-in-out infinite}
+@keyframes orbSpin{to{transform:rotate(360deg)}}
+@keyframes orbPulse{0%,100%{box-shadow:0 0 12px rgba(37,99,235,.4);transform:scale(1)}50%{box-shadow:0 0 28px rgba(37,99,235,.7);transform:scale(1.1)}}
+
+
 
 /* ── IMPROVED AI OUTPUT ── */
 .ai-output-export-row{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
@@ -793,6 +799,12 @@ textarea:focus{border-color:var(--accent)!important}
 <!-- Pipeline progress overlay -->
 <div id="pipelineOverlay">
   <div class="pipeline-modal">
+    <div class="pipeline-orb">
+      <div class="pipeline-orb-ring"></div>
+      <div class="pipeline-orb-ring"></div>
+      <div class="pipeline-orb-ring"></div>
+      <div class="pipeline-orb-core"></div>
+    </div>
     <div class="pipeline-modal-title">Processing Data…</div>
     <div class="pipeline-modal-sub" id="pipelineOverlayStep">Initialising pipeline</div>
     <div class="pipeline-modal-bar"><div class="pipeline-modal-fill" id="pipelineOverlayFill"></div></div>
@@ -803,8 +815,6 @@ textarea:focus{border-color:var(--accent)!important}
       <div class="pipeline-dot"></div>
       <div class="pipeline-dot"></div>
     </div>
-    <div class="pipeline-cat" id="pipelineCat">🐱</div>
-    <div class="pipeline-cat-msg" id="pipelineCatMsg">hang tight, almost there…</div>
   </div>
 </div>
 
@@ -7740,32 +7750,7 @@ initPyodide().catch(err=>{
   });
 })(); // end unified gimmick IIFE
 
-// ── PIPELINE MODAL CUTE CAT — timer-based, changes every 0.3s ──
-(function() {
-  const cats = ['🐱','😺','😸','😹','🙀','😻','😼','🐾'];
-  const msgs = ['hang tight, almost there…','crunching numbers…','doing cat things…','please hold, meow…','almost done, pinky promise…','good things take time 🐾','nearly there…','wrapping up! 🐾'];
-  let catIdx = 0, msgIdx = 0, catInterval = null;
-  const catEl = document.getElementById('pipelineCat');
-  const msgEl = document.getElementById('pipelineCatMsg');
-  const overlay = document.getElementById('pipelineOverlay');
-  if (overlay && catEl) {
-    new MutationObserver(() => {
-      if (overlay.classList.contains('show')) {
-        catIdx = 0; msgIdx = 0;
-        catEl.textContent = cats[0];
-        if (msgEl) msgEl.textContent = msgs[0];
-        catInterval = setInterval(() => {
-          catIdx = (catIdx + 1) % cats.length;
-          msgIdx = (msgIdx + 1) % msgs.length;
-          catEl.textContent = cats[catIdx];
-          if (msgEl) msgEl.textContent = msgs[msgIdx];
-        }, 1);
-      } else {
-        clearInterval(catInterval);
-      }
-    }).observe(overlay, { attributes: true, attributeFilter: ['class'] });
-  }
-})();
+
 
 </script>
 </body>
