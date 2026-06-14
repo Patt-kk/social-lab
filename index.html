@@ -2875,7 +2875,7 @@ function _buildCampCards(camps, metrics, containerId, activeLabelId) {
 }
 
 function renderCampaignTab() {
-  _campPostsMemo = null; // invalidate post cache for this render cycle
+  _campPostsMemo = null; // force re-filter (key-based cache in _campPostsForActive will rebuild)
   const metrics = reportData.campaignMetrics;
   const camps = Object.keys(metrics?.mention || {}).filter(k => k && k !== '(no campaign)').sort();
   const hasCampaigns = camps.length > 0;
@@ -2903,7 +2903,7 @@ function renderCampaignTab() {
   const _cABtn = document.getElementById('campAnalyseBtn');
   if (_cABtn) _cABtn.style.display = '';
 
-  _renderCampKpis(metrics);
+  _renderCampKpis();
   _renderCampChannelTable();
   _renderCampChannelBars();
   _renderCampMentionBars();
@@ -2916,29 +2916,23 @@ function renderCampaignTab() {
   _campAiUpdatePostCount();
 }
 
-function _renderCampKpis(metrics) {
-  let men = 0, eng = 0;
-  campActiveCampaigns.forEach(c => {
-    men += (metrics.mention    || {})[c] || 0;
-    eng += (metrics.engagement || {})[c] || 0;
-  });
+function _renderCampKpis() {
+  // Always derive from the deduplicated post pool so overlapping posts
+  // (tagged with multiple selected campaigns) are never counted twice.
+  const posts = _campPostsForActive();
 
-  // Sentiment from raw data for all selected campaigns
-  const pool = (allRawData.length ? allRawData : rawData);
-  let pos=0, neu=0, neg=0;
-  pool.forEach(r => {
-    let raw = String(r.Campaign||r.campaign||'').trim();
-    if (raw.startsWith('[') && raw.endsWith(']')) raw = raw.slice(1,-1);
-    const rowCamps = raw.split(',').map(x=>x.trim());
-    if (!rowCamps.some(c => campActiveCampaigns.has(c))) return;
-    const s = String(r.sentiment||'').toLowerCase();
-    if (s==='positive') pos++;
-    else if (s==='neutral') neu++;
-    else if (s==='negative') neg++;
-  });
-  const total = pos+neu+neg || 1;
+  let eng = 0, men = posts.length;
+  let pos = 0, neu = 0, neg = 0;
 
-  // Multi-campaign header label
+  posts.forEach(r => {
+    eng += parseFloat(r.engagement_score || r.engagementScore || 0) || 0;
+    const s = String(r.sentiment || '').toLowerCase();
+    if (s === 'positive') pos++;
+    else if (s === 'neutral') neu++;
+    else if (s === 'negative') neg++;
+  });
+  const total = pos + neu + neg || 1;
+
   const campLabel = campActiveCampaigns.size === 1
     ? [...campActiveCampaigns][0]
     : `${campActiveCampaigns.size} campaigns combined`;
@@ -2950,28 +2944,32 @@ function _renderCampKpis(metrics) {
     </div>
     <div class="bdd-kpi">
       <div class="bdd-kpi-val">${men.toLocaleString()}</div>
-      <div class="bdd-kpi-lbl">Mentions</div>
+      <div class="bdd-kpi-lbl">Unique Posts</div>
     </div>
     <div class="bdd-kpi pos">
-      <div class="bdd-kpi-val">${Math.round(pos/total*100)}%</div>
+      <div class="bdd-kpi-val">${Math.round(pos / total * 100)}%</div>
       <div class="bdd-kpi-lbl">Positive</div>
     </div>
     <div class="bdd-kpi neg">
-      <div class="bdd-kpi-val">${Math.round(neg/total*100)}%</div>
+      <div class="bdd-kpi-val">${Math.round(neg / total * 100)}%</div>
       <div class="bdd-kpi-lbl">Negative</div>
     </div>
   `;
 }
 
 let _campPostsMemo = null;
+let _campPostsMemoKey = '';   // tracks which selection the memo was built for
 function _campPostsForActive() {
-  if (_campPostsMemo !== null) return _campPostsMemo;
+  // Build a stable key from the current selection so memo auto-invalidates on change
+  const key = [...campActiveCampaigns].sort().join('||');
+  if (_campPostsMemo !== null && _campPostsMemoKey === key) return _campPostsMemo;
   const pool = (allRawData.length ? allRawData : rawData);
   _campPostsMemo = pool.filter(r => {
     let raw = String(r.Campaign||r.campaign||'').trim();
     if (raw.startsWith('[') && raw.endsWith(']')) raw = raw.slice(1,-1);
     return raw.split(',').map(x=>x.trim()).some(c => campActiveCampaigns.has(c));
   });
+  _campPostsMemoKey = key;
   return _campPostsMemo;
 }
 
