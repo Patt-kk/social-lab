@@ -3045,21 +3045,23 @@ function _renderCampChannelIcons() {
   const el = document.getElementById('campChannelIcons');
   if (!el) return;
   el.innerHTML = '';
-  if (!sorted.length) return;
-  sorted.forEach(([ch, eng]) => {
-    const ICON_WHITELIST = ['Facebook','TikTok','Instagram','X (Twitter)'];
-    if (!ICON_WHITELIST.includes(ch)) return;
-    const sharePct = (eng/totalEng*100).toFixed(2);
+  const ICON_WHITELIST = ['TikTok','Facebook','Instagram','X (Twitter)'];
+  // Sort whitelisted channels by engagement (descending), always show all 4
+  const sortedMap = Object.fromEntries(sorted);
+  ICON_WHITELIST.slice().sort((a,b)=>(sortedMap[b]||0)-(sortedMap[a]||0)).forEach(ch => {
+    const eng      = sortedMap[ch] || 0;
+    const sharePct = totalEng > 0 ? (eng/totalEng*100).toFixed(2) : '0.00';
     const color    = CHANNEL_COLORS[ch] || '#6B7280';
     const svgIcon  = CHANNEL_SVGS[ch]   || CHANNEL_SVGS['Website'];
+    const isZero   = eng === 0;
     const tile     = document.createElement('div');
-    tile.style.cssText = `display:flex;flex-direction:column;align-items:center;gap:8px;min-width:88px;padding:14px 16px 12px;background:var(--surface);border:1px solid ${color}30;border-radius:14px;flex:0 0 auto;position:relative;overflow:hidden;box-shadow:0 2px 8px ${color}15;transition:transform .15s,box-shadow .15s`;
+    tile.style.cssText = `display:flex;flex-direction:column;align-items:center;gap:8px;min-width:88px;padding:14px 16px 12px;background:var(--surface);border:1px solid ${isZero ? 'var(--border)' : color+'30'};border-radius:14px;flex:0 0 auto;position:relative;overflow:hidden;box-shadow:0 2px 8px ${isZero ? 'rgba(0,0,0,0.04)' : color+'15'};transition:transform .15s,box-shadow .15s${isZero ? ';opacity:0.55' : ''}`;
     tile.innerHTML = `
       <div style="position:absolute;inset:0;background:linear-gradient(160deg,${color}12 0%,transparent 60%);pointer-events:none;border-radius:14px"></div>
       <div style="width:36px;height:36px;border-radius:50%;background:#fff;box-shadow:0 2px 8px ${color}30;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:5px;flex-shrink:0;position:relative;z-index:1">
         ${svgIcon}
       </div>
-      <span style="font-family:'DM Mono',monospace;font-size:16px;font-weight:800;color:${color};line-height:1;letter-spacing:-.5px;position:relative;z-index:1">${sharePct}%</span>
+      <span style="font-family:'DM Mono',monospace;font-size:16px;font-weight:800;color:${isZero ? 'var(--text3)' : color};line-height:1;letter-spacing:-.5px;position:relative;z-index:1">${sharePct}%</span>
     `;
     el.appendChild(tile);
   });
@@ -3116,20 +3118,23 @@ function _renderCampMentionIcons() {
   const el = document.getElementById('campMentionIcons');
   if (!el) return;
   el.innerHTML = '';
-  sorted.forEach(([ch, cnt]) => {
-    const ICON_WHITELIST = ['Facebook','TikTok','Instagram','X (Twitter)'];
-    if (!ICON_WHITELIST.includes(ch)) return;
-    const sharePct = (cnt/totalMen*100).toFixed(2);
+  const MENTION_ICON_WHITELIST = ['TikTok','Facebook','Instagram','X (Twitter)'];
+  // Sort whitelisted channels by mention count (descending), always show all 4
+  const mentionSortedMap = Object.fromEntries(sorted);
+  MENTION_ICON_WHITELIST.slice().sort((a,b)=>(mentionSortedMap[b]||0)-(mentionSortedMap[a]||0)).forEach(ch => {
+    const cnt      = mentionSortedMap[ch] || 0;
+    const sharePct = totalMen > 0 ? (cnt/totalMen*100).toFixed(2) : '0.00';
     const color    = CHANNEL_COLORS[ch] || '#6B7280';
     const svgIcon  = CHANNEL_SVGS[ch]   || CHANNEL_SVGS['Website'];
+    const isZero   = cnt === 0;
     const tile     = document.createElement('div');
-    tile.style.cssText = `display:flex;flex-direction:column;align-items:center;gap:8px;min-width:88px;padding:14px 16px 12px;background:var(--surface);border:1px solid ${color}30;border-radius:14px;flex:0 0 auto;position:relative;overflow:hidden;box-shadow:0 2px 8px ${color}15;transition:transform .15s,box-shadow .15s`;
+    tile.style.cssText = `display:flex;flex-direction:column;align-items:center;gap:8px;min-width:88px;padding:14px 16px 12px;background:var(--surface);border:1px solid ${isZero ? 'var(--border)' : color+'30'};border-radius:14px;flex:0 0 auto;position:relative;overflow:hidden;box-shadow:0 2px 8px ${isZero ? 'rgba(0,0,0,0.04)' : color+'15'};transition:transform .15s,box-shadow .15s${isZero ? ';opacity:0.55' : ''}`;
     tile.innerHTML = `
       <div style="position:absolute;inset:0;background:linear-gradient(160deg,${color}12 0%,transparent 60%);pointer-events:none;border-radius:14px"></div>
       <div style="width:36px;height:36px;border-radius:50%;background:#fff;box-shadow:0 2px 8px ${color}30;display:flex;align-items:center;justify-content:center;overflow:hidden;padding:5px;flex-shrink:0;position:relative;z-index:1">
         ${svgIcon}
       </div>
-      <span style="font-family:'DM Mono',monospace;font-size:16px;font-weight:800;color:${color};line-height:1;letter-spacing:-.5px;position:relative;z-index:1">${sharePct}%</span>
+      <span style="font-family:'DM Mono',monospace;font-size:16px;font-weight:800;color:${isZero ? 'var(--text3)' : color};line-height:1;letter-spacing:-.5px;position:relative;z-index:1">${sharePct}%</span>
     `;
     el.appendChild(tile);
   });
