@@ -731,6 +731,12 @@ textarea:focus{border-color:var(--accent)!important}
 .copy-table-btn.pop{animation:copyPop .3s cubic-bezier(.34,1.56,.64,1)}
 .copy-table-btn.copied-pop{border-color:var(--pos)!important;color:#0d9e75!important;background:var(--pos-lt)!important}
 
+/* ── CHANNEL PILL PICKER ── */
+.ch-pill{display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;border:1.5px solid var(--border2);background:var(--surface2);color:var(--text3);font-size:12px;font-weight:500;font-family:"DM Sans",sans-serif;cursor:pointer;transition:all .15s;user-select:none;white-space:nowrap}
+.ch-pill:hover{border-color:var(--accent);color:var(--accent);background:var(--accent-lt)}
+.ch-pill.active{background:var(--accent);border-color:var(--accent);color:#fff;font-weight:600;box-shadow:0 2px 6px rgba(37,99,235,.25)}
+.ch-pill.active:hover{background:#1d4ed8;border-color:#1d4ed8}
+
 
 /* ── EMPTY STATE ILLUSTRATIONS ── */
 .empty-state{gap:16px}
@@ -1275,7 +1281,15 @@ textarea:focus{border-color:var(--accent)!important}
 
             <!-- Campaign selector -->
             <div style="margin-bottom:20px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:14px 16px">
-              <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);margin-bottom:10px">Select Campaigns <span style="font-weight:500;color:var(--text3);text-transform:none;letter-spacing:0">(multi-select)</span> <span id="campActiveLabel" style="font-weight:600;color:var(--accent);letter-spacing:0;text-transform:none;margin-left:6px"></span></div>
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap">
+                <div style="font-size:11px;font-weight:700;letter-spacing:.8px;text-transform:uppercase;color:var(--text3)">Select Campaigns</div>
+                <span style="font-weight:500;color:var(--text3);font-size:11px;letter-spacing:0;text-transform:none">(multi-select)</span>
+                <span id="campActiveLabel" style="font-weight:600;color:var(--accent);font-size:11px;letter-spacing:0;text-transform:none"></span>
+                <div style="margin-left:auto;display:flex;align-items:center;gap:6px">
+                  <button id="campDashSelectAll" style="font-size:11px;font-weight:600;padding:4px 11px;border-radius:6px;border:1px solid var(--border2);background:var(--surface);color:var(--text2);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif">Select All</button>
+                  <button id="campDashClearAll" style="font-size:11px;font-weight:500;padding:4px 11px;border-radius:6px;border:1px solid var(--border2);background:var(--surface);color:var(--text3);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif">Clear</button>
+                </div>
+              </div>
               <div id="campPillsContainer" style="display:flex;gap:7px;overflow-x:auto;padding-bottom:4px;scrollbar-width:thin"></div>
             </div>
 
@@ -1427,24 +1441,27 @@ textarea:focus{border-color:var(--accent)!important}
                   </div>
                 </div>
 
+                <!-- Channel filter row (full width inline pills) -->
+                <div style="margin-bottom:14px">
+                  <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+                    <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase">Channel</div>
+                    <span id="campAiChannelCount" style="font-size:10px;font-weight:600;color:var(--accent);background:var(--accent-lt);border:1px solid rgba(37,99,235,.2);border-radius:10px;padding:1px 7px;display:none"></span>
+                    <button id="campAiChannelSelectAll" style="font-size:10px;font-weight:600;color:var(--text3);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px">All</button>
+                    <span style="font-size:10px;color:var(--border2)">·</span>
+                    <button id="campAiChannelClearAll" style="font-size:10px;font-weight:600;color:var(--text3);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px">None</button>
+                  </div>
+                  <div id="campAiChannelPills" style="display:flex;flex-wrap:wrap;gap:6px;min-height:30px">
+                    <span style="font-size:12px;color:var(--text3);font-style:italic;padding:4px 0">No data loaded — upload a CSV first</span>
+                  </div>
+                  <!-- Hidden ms-dropdown kept for backward compat with campAiMsGetValues('Source') -->
+                  <div id="campAiMsDropSource" style="display:none">
+                    <div class="ms-option ms-all selected" data-value="__all__"><input type="checkbox" checked> All channels</div>
+                    <div class="ms-divider"></div>
+                  </div>
+                </div>
+
                 <!-- Filters row -->
                 <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px">
-                  <div>
-                    <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px">Source</div>
-                    <div class="ms-wrap" id="campAiMsWrapSource">
-                      <div class="ms-trigger" id="campAiMsTriggerSource">
-                        <span class="ms-trigger-label placeholder" id="campAiMsLabelSource">All channels</span>
-                        <span class="ms-arrow">▼</span>
-                      </div>
-                      <div class="ms-dropdown" id="campAiMsDropSource">
-                        <div class="ms-option ms-all selected" data-value="__all__">
-                          <input type="checkbox" checked> All channels
-                        </div>
-                        <div class="ms-divider"></div>
-                        <!-- injected by populateCampAiFilters -->
-                      </div>
-                    </div>
-                  </div>
                   <div>
                     <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px">Sentiment</div>
                     <div class="ms-wrap" id="campAiMsWrapSent">
@@ -1479,6 +1496,7 @@ textarea:focus{border-color:var(--accent)!important}
                       <option value="none">Original order</option>
                     </select>
                   </div>
+                  <div></div>
                 </div>
 
                 <!-- Custom prompt -->
@@ -1876,25 +1894,28 @@ textarea:focus{border-color:var(--accent)!important}
               </div>
             </div>
 
+            <!-- Channel filter row (full width inline pills) -->
+            <div style="margin-bottom:14px">
+              <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;flex-wrap:wrap">
+                <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase">Channel</div>
+                <span id="bddAiChannelCount" style="font-size:10px;font-weight:600;color:var(--accent);background:var(--accent-lt);border:1px solid rgba(37,99,235,.2);border-radius:10px;padding:1px 7px;display:none"></span>
+                <button id="bddAiChannelSelectAll" style="font-size:10px;font-weight:600;color:var(--text3);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px">All</button>
+                <span style="font-size:10px;color:var(--border2)">·</span>
+                <button id="bddAiChannelClearAll" style="font-size:10px;font-weight:600;color:var(--text3);background:none;border:none;cursor:pointer;padding:0;text-decoration:underline;text-underline-offset:2px">None</button>
+                <div id="bddAiSourceLockNote" style="display:none;font-size:10px;font-weight:600;color:#d97706;background:#fff8ed;border:1px solid #fde68a;border-radius:5px;padding:2px 7px;">🔒 Locked to Google Reviews</div>
+              </div>
+              <div id="bddAiChannelPills" style="display:flex;flex-wrap:wrap;gap:6px;min-height:30px">
+                <span style="font-size:12px;color:var(--text3);font-style:italic;padding:4px 0">No data loaded — upload a CSV first</span>
+              </div>
+              <!-- Hidden ms-dropdown kept for backward compat with bddAiMsGetValues('Source') -->
+              <div id="bddAiMsDropSource" style="display:none">
+                <div class="ms-option ms-all selected" data-value="__all__"><input type="checkbox" checked> All channels</div>
+                <div class="ms-divider"></div>
+              </div>
+            </div>
+
             <!-- Filters row -->
             <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:12px;margin-bottom:12px">
-              <div>
-                <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px">Source</div>
-                <div class="ms-wrap" id="bddAiMsWrapSource">
-                  <div class="ms-trigger" id="bddAiMsTriggerSource">
-                    <span class="ms-trigger-label placeholder" id="bddAiMsLabelSource">All channels</span>
-                    <span class="ms-arrow">▼</span>
-                  </div>
-                  <div class="ms-dropdown" id="bddAiMsDropSource">
-                    <div class="ms-option ms-all selected" data-value="__all__">
-                      <input type="checkbox" checked> All channels
-                    </div>
-                    <div class="ms-divider"></div>
-                    <!-- injected by populateBddAiFilters -->
-                  </div>
-                </div>
-                <div id="bddAiSourceLockNote" style="display:none;margin-top:5px;font-size:10px;font-weight:600;color:#d97706;background:#fff8ed;border:1px solid #fde68a;border-radius:5px;padding:2px 7px;">🔒 Locked to Google Reviews</div>
-              </div>
               <div>
                 <div style="font-size:10px;font-weight:700;color:var(--text3);letter-spacing:.5px;text-transform:uppercase;margin-bottom:5px">Sentiment</div>
                 <div class="ms-wrap" id="bddAiMsWrapSent">
@@ -1929,6 +1950,7 @@ textarea:focus{border-color:var(--accent)!important}
                   <option value="none">Original order</option>
                 </select>
               </div>
+              <div></div>
             </div>
             <div style="margin-bottom:12px">
               <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px;flex-wrap:wrap;gap:6px">
@@ -2807,34 +2829,69 @@ function _buildCampCards(camps, metrics, containerId, activeLabelId) {
   }
 
   // Header row: "Select All" / "Clear All" controls
-  const headerRow = document.createElement('div');
-  headerRow.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap';
+  // For the dashboard container these buttons live in the card header above (campDashSelectAll / campDashClearAll).
+  // For the AI panel container we inject them inline as before.
   const allSelected = top20.every(c => campActiveCampaigns.has(c));
-  headerRow.innerHTML = `
-    <button id="${containerId}_selectAll" style="font-size:11px;font-weight:600;padding:4px 11px;border-radius:6px;border:1px solid var(--border2);background:${allSelected?'var(--accent)':'var(--surface)'};color:${allSelected?'#fff':'var(--text2)'};cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif">
-      ${allSelected ? '✓ All Selected' : 'Select All'}
-    </button>
-    <button id="${containerId}_clearAll" style="font-size:11px;font-weight:500;padding:4px 11px;border-radius:6px;border:1px solid var(--border2);background:var(--surface);color:var(--text3);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;${campActiveCampaigns.size===0?'opacity:.35;pointer-events:none':''}">
-      Clear
-    </button>
-    ${campActiveCampaigns.size > 0 ? `<span style="font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-lt);border:1px solid rgba(37,99,235,.2);border-radius:20px;padding:2px 10px">${campActiveCampaigns.size} selected</span>` : '<span style="font-size:11px;color:var(--text3)">Click campaigns to select (multi-select enabled)</span>'}
-  `;
-  headerRow.querySelector(`#${containerId}_selectAll`).addEventListener('click', () => {
-    if (allSelected) { campActiveCampaigns.clear(); }
-    else { top20.forEach(c => campActiveCampaigns.add(c)); }
-    campPostSent='all'; campPostLimit=5;
-    document.querySelectorAll('[data-camp-sent]').forEach(x=>x.classList.toggle('active',x.dataset.campSent==='all'));
-    if (containerId === 'campPillsContainer') renderCampaignTab();
-    else { populateCampAiPills(); populateCampAiFilters(); _campAiUpdatePostCount(); }
-  });
-  headerRow.querySelector(`#${containerId}_clearAll`).addEventListener('click', () => {
-    campActiveCampaigns.clear();
-    campPostSent='all'; campPostLimit=5;
-    document.querySelectorAll('[data-camp-sent]').forEach(x=>x.classList.toggle('active',x.dataset.campSent==='all'));
-    if (containerId === 'campPillsContainer') renderCampaignTab();
-    else { populateCampAiPills(); populateCampAiFilters(); _campAiUpdatePostCount(); }
-  });
-  container.appendChild(headerRow);
+  if (containerId !== 'campPillsContainer') {
+    const headerRow = document.createElement('div');
+    headerRow.style.cssText = 'display:flex;align-items:center;gap:8px;margin-bottom:10px;flex-wrap:wrap';
+    headerRow.innerHTML = `
+      <button id="${containerId}_selectAll" style="font-size:11px;font-weight:600;padding:4px 11px;border-radius:6px;border:1px solid var(--border2);background:${allSelected?'var(--accent)':'var(--surface)'};color:${allSelected?'#fff':'var(--text2)'};cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif">
+        ${allSelected ? '✓ All Selected' : 'Select All'}
+      </button>
+      <button id="${containerId}_clearAll" style="font-size:11px;font-weight:500;padding:4px 11px;border-radius:6px;border:1px solid var(--border2);background:var(--surface);color:var(--text3);cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif;${campActiveCampaigns.size===0?'opacity:.35;pointer-events:none':''}">
+        Clear
+      </button>
+      ${campActiveCampaigns.size > 0 ? `<span style="font-size:11px;font-weight:600;color:var(--accent);background:var(--accent-lt);border:1px solid rgba(37,99,235,.2);border-radius:20px;padding:2px 10px">${campActiveCampaigns.size} selected</span>` : '<span style="font-size:11px;color:var(--text3)">Click campaigns to select (multi-select enabled)</span>'}
+    `;
+    headerRow.querySelector(`#${containerId}_selectAll`).addEventListener('click', () => {
+      if (allSelected) { campActiveCampaigns.clear(); }
+      else { top20.forEach(c => campActiveCampaigns.add(c)); }
+      campPostSent='all'; campPostLimit=5;
+      document.querySelectorAll('[data-camp-sent]').forEach(x=>x.classList.toggle('active',x.dataset.campSent==='all'));
+      populateCampAiPills(); populateCampAiFilters(); _campAiUpdatePostCount();
+    });
+    headerRow.querySelector(`#${containerId}_clearAll`).addEventListener('click', () => {
+      campActiveCampaigns.clear();
+      campPostSent='all'; campPostLimit=5;
+      document.querySelectorAll('[data-camp-sent]').forEach(x=>x.classList.toggle('active',x.dataset.campSent==='all'));
+      populateCampAiPills(); populateCampAiFilters(); _campAiUpdatePostCount();
+    });
+    container.appendChild(headerRow);
+  } else {
+    // Dashboard: wire the external header buttons (re-clone to remove old listeners)
+    const selBtn  = document.getElementById('campDashSelectAll');
+    const clrBtn  = document.getElementById('campDashClearAll');
+    if (selBtn) {
+      const newSel = selBtn.cloneNode(true); selBtn.replaceWith(newSel);
+      // Update style to reflect all-selected state
+      if (allSelected) {
+        newSel.style.background = 'var(--accent)'; newSel.style.color = '#fff';
+        newSel.style.borderColor = 'var(--accent)'; newSel.textContent = '✓ All Selected';
+      } else {
+        newSel.style.background = 'var(--surface)'; newSel.style.color = 'var(--text2)';
+        newSel.style.borderColor = 'var(--border2)'; newSel.textContent = 'Select All';
+      }
+      newSel.addEventListener('click', () => {
+        if (top20.every(c => campActiveCampaigns.has(c))) { campActiveCampaigns.clear(); }
+        else { top20.forEach(c => campActiveCampaigns.add(c)); }
+        campPostSent='all'; campPostLimit=5;
+        document.querySelectorAll('[data-camp-sent]').forEach(x=>x.classList.toggle('active',x.dataset.campSent==='all'));
+        renderCampaignTab();
+      });
+    }
+    if (clrBtn) {
+      const newClr = clrBtn.cloneNode(true); clrBtn.replaceWith(newClr);
+      newClr.style.opacity   = campActiveCampaigns.size === 0 ? '0.35' : '1';
+      newClr.style.pointerEvents = campActiveCampaigns.size === 0 ? 'none' : '';
+      newClr.addEventListener('click', () => {
+        campActiveCampaigns.clear();
+        campPostSent='all'; campPostLimit=5;
+        document.querySelectorAll('[data-camp-sent]').forEach(x=>x.classList.toggle('active',x.dataset.campSent==='all'));
+        renderCampaignTab();
+      });
+    }
+  }
 
   // Pills grid
   const grid = document.createElement('div');
@@ -6342,16 +6399,13 @@ function setBddAiType(type) {
   if (outLbl) outLbl.textContent = lbl.output;
 
   // Lock source to Google Reviews for that type
-  const srcWrap = document.getElementById('bddAiMsWrapSource');
+  const pillsEl = document.getElementById('bddAiChannelPills');
   const srcLock = document.getElementById('bddAiSourceLockNote');
   if (type === 'googlereview') {
-    if (srcWrap) { srcWrap.style.opacity='0.45'; srcWrap.style.pointerEvents='none'; }
-    const srcLbl = document.getElementById('bddAiMsLabelSource');
-    if (srcLbl) { srcLbl.textContent='Google Reviews only'; srcLbl.classList.remove('placeholder'); }
+    if (pillsEl) { pillsEl.style.opacity='0.45'; pillsEl.style.pointerEvents='none'; }
     if (srcLock) srcLock.style.display='';
   } else {
-    if (srcWrap) { srcWrap.style.opacity=''; srcWrap.style.pointerEvents=''; }
-    bddAiMsUpdateLabel('Source');
+    if (pillsEl) { pillsEl.style.opacity=''; pillsEl.style.pointerEvents=''; }
     if (srcLock) srcLock.style.display='none';
   }
   _bddAiUpdatePostCount();
@@ -6408,9 +6462,9 @@ function bddAiMsUpdateLabel(key) {
 
 function populateBddAiFilters() {
   const pool = allRawData.length ? allRawData : rawData;
-  const drop = document.getElementById('bddAiMsDropSource');
-  if (!drop) return;
-  while (drop.children.length > 2) drop.removeChild(drop.lastChild);
+  const pillsEl = document.getElementById('bddAiChannelPills');
+  const drop    = document.getElementById('bddAiMsDropSource');
+  if (!pillsEl || !drop) return;
 
   // Scope to active brand rows so we only show channels that brand actually has
   const brandPool = bddActiveBrand ? pool.filter(row => {
@@ -6421,33 +6475,87 @@ function populateBddAiFilters() {
 
   // Build present channels from normalized names
   const presentNormalized = new Set(brandPool.map(r => normalizeChannel(String(r.source||r.Source||'').trim())));
-
-  // Also collect raw source values that didn't normalize to a known channel,
-  // so we never silently drop a channel the user can see in their data
   const rawSources = new Set();
   brandPool.forEach(r => {
     const raw = String(r.source||r.Source||'').trim();
     if (raw && raw !== 'null') rawSources.add(raw);
   });
-
-  // Show all canonical channels present for this brand
   const toShow = CANONICAL_CHANNELS.filter(ch => presentNormalized.has(ch));
-
-  // Add any raw source values that didn't map to a canonical channel
   rawSources.forEach(raw => {
     const norm = normalizeChannel(raw);
     if (!CANONICAL_CHANNELS.includes(norm) && raw) toShow.push(raw);
   });
 
+  // Build inline pill UI
+  pillsEl.innerHTML = '';
+  if (!toShow.length) {
+    pillsEl.innerHTML = '<span style="font-size:12px;color:var(--text3);font-style:italic;padding:4px 0">No channels found in this brand\'s data</span>';
+  }
+
   toShow.forEach(ch => {
-    const div = document.createElement('div'); div.className='ms-option'; div.dataset.value=ch;
-    div.addEventListener('click', () => bddAiMsToggleOption('Source', div));
-    div.innerHTML=`<input type="checkbox"> ${escapeHtml(ch)}`; drop.appendChild(div);
+    const pill = document.createElement('button');
+    pill.className = 'ch-pill active'; // start all selected
+    pill.dataset.channel = ch;
+    pill.textContent = ch;
+    pill.addEventListener('click', () => {
+      pill.classList.toggle('active');
+      _bddAiSyncChannelPills();
+    });
+    pillsEl.appendChild(pill);
   });
 
-  drop.querySelector('.ms-all').classList.add('selected');
-  drop.querySelector('.ms-all input').checked=true;
-  bddAiMsUpdateLabel('Source');
+  // Sync the hidden dropdown to match (all selected = "all channels")
+  _bddAiSyncChannelPills();
+
+  // Wire Select All / None buttons (idempotent — remove old listeners by replacing nodes)
+  const allBtn  = document.getElementById('bddAiChannelSelectAll');
+  const noneBtn = document.getElementById('bddAiChannelClearAll');
+  const newAll  = allBtn.cloneNode(true);
+  const newNone = noneBtn.cloneNode(true);
+  allBtn.replaceWith(newAll);
+  noneBtn.replaceWith(newNone);
+  newAll.addEventListener('click',  () => { pillsEl.querySelectorAll('.ch-pill').forEach(p=>p.classList.add('active'));    _bddAiSyncChannelPills(); });
+  newNone.addEventListener('click', () => { pillsEl.querySelectorAll('.ch-pill').forEach(p=>p.classList.remove('active')); _bddAiSyncChannelPills(); });
+}
+
+function _bddAiSyncChannelPills() {
+  // Read active pills and sync the hidden ms-dropdown + update count badge
+  const drop    = document.getElementById('bddAiMsDropSource');
+  const pillsEl = document.getElementById('bddAiChannelPills');
+  const countEl = document.getElementById('bddAiChannelCount');
+  if (!drop || !pillsEl) return;
+
+  const allPills    = [...pillsEl.querySelectorAll('.ch-pill')];
+  const activePills = allPills.filter(p => p.classList.contains('active'));
+  const allSelected = activePills.length === allPills.length || activePills.length === 0;
+
+  // Rebuild hidden dropdown to match pill state
+  while (drop.children.length > 2) drop.removeChild(drop.lastChild);
+  allPills.forEach(pill => {
+    const ch  = pill.dataset.channel;
+    const div = document.createElement('div');
+    div.className = 'ms-option' + (activePills.includes(pill) ? ' selected' : '');
+    div.dataset.value = ch;
+    div.innerHTML = `<input type="checkbox"${activePills.includes(pill) ? ' checked' : ''}> ${escapeHtml(ch)}`;
+    drop.appendChild(div);
+  });
+
+  // Set "All channels" state
+  const allOpt = drop.querySelector('.ms-all');
+  if (allSelected) {
+    allOpt.classList.add('selected'); allOpt.querySelector('input').checked = true;
+    drop.querySelectorAll('.ms-option:not(.ms-all)').forEach(o => { o.classList.remove('selected'); o.querySelector('input').checked = false; });
+  } else {
+    allOpt.classList.remove('selected'); allOpt.querySelector('input').checked = false;
+  }
+
+  // Update count badge
+  if (countEl) {
+    if (allSelected) { countEl.style.display = 'none'; }
+    else { countEl.textContent = `${activePills.length} selected`; countEl.style.display = ''; }
+  }
+
+  _bddAiUpdatePostCount();
 }
 
 function _bddAiGetRows() {
@@ -6870,7 +6978,14 @@ async function _runGeminiStream({ model, system, user, outputBody, onDone, onErr
       body: JSON.stringify({
         systemInstruction: { parts: [{ text: system }] },
         contents: [{ role: 'user', parts: [{ text: user }] }],
-        generationConfig: { maxOutputTokens: 4096, temperature: 0.7 },
+        generationConfig: {
+          maxOutputTokens: safeModel === 'gemini-2.5-pro' ? 32000
+                         : safeModel === 'gemini-2.5-flash' ? 16000
+                         : 8192,
+          temperature: 0.7,
+          ...(safeModel === 'gemini-2.5-pro' || safeModel === 'gemini-2.5-flash'
+            ? { thinkingConfig: { thinkingBudget: 0 } } : {}),
+        },
       }),
     });
     if (!response.ok) {
@@ -7088,9 +7203,10 @@ function populateCampAiPills() {
 
 // Source channel filter for Campaign AI
 function populateCampAiFilters() {
-  const drop = document.getElementById('campAiMsDropSource');
-  if (!drop) return;
-  while (drop.children.length > 2) drop.removeChild(drop.lastChild);
+  const drop    = document.getElementById('campAiMsDropSource');
+  const pillsEl = document.getElementById('campAiChannelPills');
+  if (!drop || !pillsEl) return;
+
   const pool = allRawData.length ? allRawData : rawData;
   const campPool = campActiveCampaigns.size ? pool.filter(r => {
     let v = String(r.Campaign || r.campaign || '').trim();
@@ -7104,14 +7220,70 @@ function populateCampAiFilters() {
   campPool.forEach(r => { const s = String(r.source || r.Source || '').trim(); if (s && s !== 'null') rawSrcs.add(s); });
   rawSrcs.forEach(raw => { const n = normalizeChannel(raw); if (!CANONICAL_CHANNELS.includes(n)) toShow.push(raw); });
 
+  // Build inline pill UI
+  pillsEl.innerHTML = '';
+  if (!toShow.length) {
+    pillsEl.innerHTML = '<span style="font-size:12px;color:var(--text3);font-style:italic;padding:4px 0">No channels found — select a campaign first</span>';
+  }
+
   toShow.forEach(ch => {
-    const div = document.createElement('div'); div.className = 'ms-option'; div.dataset.value = ch;
-    div.addEventListener('click', () => campAiMsToggleOption('Source', div));
-    div.innerHTML = `<input type="checkbox"> ${escapeHtml(ch)}`; drop.appendChild(div);
+    const pill = document.createElement('button');
+    pill.className = 'ch-pill active';
+    pill.dataset.channel = ch;
+    pill.textContent = ch;
+    pill.addEventListener('click', () => {
+      pill.classList.toggle('active');
+      _campAiSyncChannelPills();
+    });
+    pillsEl.appendChild(pill);
   });
-  drop.querySelector('.ms-all').classList.add('selected');
-  drop.querySelector('.ms-all input').checked = true;
-  campAiMsUpdateLabel('Source');
+
+  _campAiSyncChannelPills();
+
+  const allBtn  = document.getElementById('campAiChannelSelectAll');
+  const noneBtn = document.getElementById('campAiChannelClearAll');
+  const newAll  = allBtn.cloneNode(true);
+  const newNone = noneBtn.cloneNode(true);
+  allBtn.replaceWith(newAll);
+  noneBtn.replaceWith(newNone);
+  newAll.addEventListener('click',  () => { pillsEl.querySelectorAll('.ch-pill').forEach(p=>p.classList.add('active'));    _campAiSyncChannelPills(); });
+  newNone.addEventListener('click', () => { pillsEl.querySelectorAll('.ch-pill').forEach(p=>p.classList.remove('active')); _campAiSyncChannelPills(); });
+}
+
+function _campAiSyncChannelPills() {
+  const drop    = document.getElementById('campAiMsDropSource');
+  const pillsEl = document.getElementById('campAiChannelPills');
+  const countEl = document.getElementById('campAiChannelCount');
+  if (!drop || !pillsEl) return;
+
+  const allPills    = [...pillsEl.querySelectorAll('.ch-pill')];
+  const activePills = allPills.filter(p => p.classList.contains('active'));
+  const allSelected = activePills.length === allPills.length || activePills.length === 0;
+
+  while (drop.children.length > 2) drop.removeChild(drop.lastChild);
+  allPills.forEach(pill => {
+    const ch  = pill.dataset.channel;
+    const div = document.createElement('div');
+    div.className = 'ms-option' + (activePills.includes(pill) ? ' selected' : '');
+    div.dataset.value = ch;
+    div.innerHTML = `<input type="checkbox"${activePills.includes(pill) ? ' checked' : ''}> ${escapeHtml(ch)}`;
+    drop.appendChild(div);
+  });
+
+  const allOpt = drop.querySelector('.ms-all');
+  if (allSelected) {
+    allOpt.classList.add('selected'); allOpt.querySelector('input').checked = true;
+    drop.querySelectorAll('.ms-option:not(.ms-all)').forEach(o => { o.classList.remove('selected'); o.querySelector('input').checked = false; });
+  } else {
+    allOpt.classList.remove('selected'); allOpt.querySelector('input').checked = false;
+  }
+
+  if (countEl) {
+    if (allSelected) { countEl.style.display = 'none'; }
+    else { countEl.textContent = `${activePills.length} selected`; countEl.style.display = ''; }
+  }
+
+  _campAiUpdatePostCount();
 }
 
 // Multi-select helpers for Campaign AI
@@ -7496,11 +7668,7 @@ document.getElementById('bddAiTypeBrand')?.addEventListener('click', () => setBd
 document.getElementById('bddAiTypeSentiment')?.addEventListener('click', () => setBddAiType('sentiment'));
 
 // BDD AI — ms-dropdowns (trigger + delegated option clicks)
-document.getElementById('bddAiMsTriggerSource')?.addEventListener('click', () => bddAiMsToggle('Source'));
-document.getElementById('bddAiMsDropSource')?.addEventListener('click', e => {
-  const opt = e.target.closest('.ms-option'); if (!opt) return;
-  opt.classList.contains('ms-all') ? bddAiMsToggleAll('Source', opt) : bddAiMsToggleOption('Source', opt);
-});
+// Source is now handled by inline ch-pill buttons; only Sent uses ms-dropdown
 document.getElementById('bddAiMsTriggerSent')?.addEventListener('click', () => bddAiMsToggle('Sent'));
 document.getElementById('bddAiMsDropSent')?.addEventListener('click', e => {
   const opt = e.target.closest('.ms-option'); if (!opt) return;
@@ -7513,11 +7681,7 @@ document.getElementById('campAiTypeSentiment')?.addEventListener('click', () => 
 document.getElementById('campAiTypeContent')?.addEventListener('click', () => setCampAiType('content'));
 
 // Campaign AI — ms-dropdowns (trigger + delegated option clicks)
-document.getElementById('campAiMsTriggerSource')?.addEventListener('click', () => campAiMsToggle('Source'));
-document.getElementById('campAiMsDropSource')?.addEventListener('click', e => {
-  const opt = e.target.closest('.ms-option'); if (!opt) return;
-  opt.classList.contains('ms-all') ? campAiMsToggleAll('Source', opt) : campAiMsToggleOption('Source', opt);
-});
+// Source is now handled by inline ch-pill buttons; only Sent uses ms-dropdown
 document.getElementById('campAiMsTriggerSent')?.addEventListener('click', () => campAiMsToggle('Sent'));
 document.getElementById('campAiMsDropSent')?.addEventListener('click', e => {
   const opt = e.target.closest('.ms-option'); if (!opt) return;
