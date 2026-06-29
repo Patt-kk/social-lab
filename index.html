@@ -3255,7 +3255,7 @@ function _renderCampSentDonut() {
 
   // ── Canvas sizing (large, vertical layout) ──
   const STROKE = 34, R = 72;
-  const PAD = 80;
+  const PAD = 155;
   const SIZE = (R + STROKE / 2) * 2 + PAD * 2;
   const cx = SIZE / 2, cy = SIZE / 2;
 
@@ -3350,28 +3350,46 @@ function _renderCampSentDonut() {
     // Leader lines
     const RING_OUTER  = R + STROKE / 2;
     const LINE_START  = RING_OUTER + 5;
-    const LINE_RADIAL = RING_OUTER + 22;
-    const TICK_LEN    = 20;
+    const LINE_RADIAL = RING_OUTER + 26;
+    const TICK_LEN    = 26;
     const LABEL_GAP   = 5;
 
     ctx.textBaseline = 'middle';
 
-    segAngles.forEach(s => {
-      const pct = s.val / total * 100;
-      if (pct < 0.5) return;
-
+    // Compute raw elbow positions first so we can spread overlapping labels
+    const leaderData = segAngles.map(s => {
+      const pct  = s.val / total * 100;
+      if (pct < 0.5) return null;
       const mid  = s.start + s.sweep / 2;
       const cosA = Math.cos(mid);
       const sinA = Math.sin(mid);
+      const x1   = cx + cosA * LINE_START;
+      const y1   = cy + sinA * LINE_START;
+      const x2   = cx + cosA * LINE_RADIAL;
+      const y2   = cy + sinA * LINE_RADIAL;
+      const dir  = cosA >= 0 ? 1 : -1;
+      const x3   = x2 + dir * TICK_LEN;
+      return { s, pct, x1, y1, x2, y2, x3, y3: y2, dir };
+    }).filter(Boolean);
 
-      const x1 = cx + cosA * LINE_START;
-      const y1 = cy + sinA * LINE_START;
-      const x2 = cx + cosA * LINE_RADIAL;
-      const y2 = cy + sinA * LINE_RADIAL;
-      const dir = cosA >= 0 ? 1 : -1;
-      const x3  = x2 + dir * TICK_LEN;
-      const y3  = y2;
+    // Vertical collision spread: if two labels on the same side are within 22px vertically, push them apart
+    const MIN_GAP = 42;
+    for (let pass = 0; pass < 3; pass++) {
+      for (let i = 0; i < leaderData.length; i++) {
+        for (let j = i + 1; j < leaderData.length; j++) {
+          const a = leaderData[i], b = leaderData[j];
+          if (a.dir !== b.dir) continue; // different sides — no conflict
+          const dy = b.y3 - a.y3;
+          if (Math.abs(dy) < MIN_GAP) {
+            const shift = (MIN_GAP - Math.abs(dy)) / 2 + 1;
+            a.y3 -= shift;
+            b.y3 += shift;
+          }
+        }
+      }
+    }
 
+    leaderData.forEach(({ s, pct, x1, y1, x2, y2, x3, y3, dir }) => {
       ctx.beginPath();
       ctx.moveTo(x1, y1);
       ctx.lineTo(x2, y2);
@@ -3391,12 +3409,12 @@ function _renderCampSentDonut() {
       ctx.textAlign = dir >= 0 ? 'left' : 'right';
 
       ctx.fillStyle = '#4B5168';
-      ctx.font = '600 11px "DM Sans", sans-serif';
-      ctx.fillText(s.label, labelX, y3 - 8);
+      ctx.font = '600 20px "DM Sans", sans-serif';
+      ctx.fillText(s.label, labelX, y3 - 13);
 
       ctx.fillStyle = s.color;
-      ctx.font = '800 12px "DM Sans", sans-serif';
-      ctx.fillText(pct.toFixed(1) + '%', labelX, y3 + 7);
+      ctx.font = '800 18px "DM Sans", sans-serif';
+      ctx.fillText(pct.toFixed(1) + '%', labelX, y3 + 13);
     });
   });
 }
